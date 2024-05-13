@@ -11,20 +11,21 @@ code repo: https://github.com/REMLA-8/urlphishing/tree/a1
 
 ## Overview A2
 
-operation repo: https://github.com/remla24-team8/operation
+Operation https://github.com/remla24-team8/operation
+Lib-version https://github.com/remla24-team8/lib-version
+Lib-ml https://github.com/remla24-team8/lib-ml/tree/v0.1.2
+model-training https://github.com/remla24-team8/model-training
+model-service https://github.com/remla24-team8/model-service
+app https://github.com/remla24-team8/app
 
-model-training repo: https://github.com/remla24-team8/model-training
+Notes
 
-
-lib-ml repo: https://github.com/remla24-team8/lib-ml
-
-lib-version repo: https://github.com/remla24-team8/lib-version
-
-model-service repo: https://github.com/remla24-team8/model-service
-
-Currently not fully implemented
-
-app repo: https://github.com/remla24-team8/app
+Due to the absence of one of our team members and another joining halfway throughout the week, our progress has been minimal. We will make a strong comeback.
+Repos that have finished work
+lib-version
+lib-ml
+model-training
+(all other repos are filled with wrappers)
 
 App is not implemented yet
 
