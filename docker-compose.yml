@@ -1,0 +1,16 @@
+services:
+  model-service:
+    image: ghcr.io/remla24-team8/model-service:155e032
+    container_name: model-service
+    ports:
+        - 127.0.0.1:5099:5000
+    volumes:
+        - model-service-model-volume:/model-service/models
+volumes:
+  model-service-model-volume:
+    driver: local
+    name: model-service-model-volume
+
+networks:
+  default:
+    name: remla24-team8
