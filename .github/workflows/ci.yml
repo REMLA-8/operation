@@ -28,6 +28,6 @@ jobs:
       - name: Install
         run: uv pip sync requirements_test.txt
       - name: Start containers
-        run: docker compose up -d
+        run: docker compose up --wait -d
       - name: Test service
         run: pytest

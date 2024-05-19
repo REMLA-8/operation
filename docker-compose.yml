@@ -1,11 +1,19 @@
 services:
   model-service:
-    image: ghcr.io/remla24-team8/model-service:155e032
+    # image: model-service-remla
+    image: ghcr.io/remla24-team8/model-service:0a31d72
     container_name: model-service
     ports:
         - 127.0.0.1:5099:5000
-    volumes:
-        - model-service-model-volume:/model-service/models
+    # volumes:
+    #     - model-service-model-volume:/model-service/models
+
+    healthcheck:
+      test: ".venv/bin/python model_service/health.py"
+      interval: 2s
+      timeout: 30s
+      retries: 15
+
 volumes:
   model-service-model-volume:
     driver: local
