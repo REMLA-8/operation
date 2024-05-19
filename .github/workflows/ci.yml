@@ -1,0 +1,33 @@
+name: Docker Compose Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  packages: read
+  contents: read
+
+jobs:
+  test-services:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+      - name: Install uv
+        run: pipx install uv
+      - name: Activate virtualenv
+        run: |
+          uv venv
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+      - name: Install
+        run: uv pip sync requirements_test.txt
+      - name: Start containers
+        run: docker compose up -d
+      - name: Test service
+        run: pytest
