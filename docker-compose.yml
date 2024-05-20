@@ -2,6 +2,8 @@ services:
   model-service:
     image: ghcr.io/remla24-team8/model-service:v0.1.0
     container_name: model-service
+    ports:
+      - "4000:5000"
     volumes:
         - model-service-model-volume:/model-service/models
 
@@ -15,12 +17,23 @@ services:
     image: ghcr.io/remla24-team8/app-backend:3702638
     container_name: app-backend
     depends_on:
-      model-service:
-        condition: service_healthy
+     model-service:
+       condition: service_healthy
     ports:
-      - "127.0.0.1:5099:5000"
+      - "127.0.0.1:5000:5000"
     environment:
-      MODEL_SERVICE_URL: 'http://model-service:5000'
+      MODEL_SERVICE_URL: 'http://model-service:4000'
+      
+  app-frontend:
+    image: ghcr.io/remla24-team8/app-frontend:eb76721
+    container_name: app-frontend
+    depends_on:
+     model-service:
+       condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      REACT_APP_BACKEND_URL: 'http://app-backend:5000'
 
 volumes:
   model-service-model-volume:
