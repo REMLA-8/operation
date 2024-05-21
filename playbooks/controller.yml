@@ -1,0 +1,16 @@
+---
+- hosts: controller
+  become: yes
+  tasks:
+    - name: Pull the machine learning application Docker image
+      docker_image:
+        name: TODO #your-docker-image-name
+        source: pull
+
+    - name: Run the machine learning application Docker container
+      docker_container:
+        name: ml-app
+        image: TODO #your-docker-image-name
+        state: started
+        ports:
+          - "5000:5000"  # Adjust the port mapping as necessary
