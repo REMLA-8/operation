@@ -27,6 +27,15 @@ lib-ml
 model-training
 (all other repos are filled with wrappers)
 
+## Overview A3
+
+## Docker Compose
+
+To test the predict:
+```
+curl --header "Content-Type: application/json" --request POST --data '{"url": ["google.com", "tudelft.nl"]}'  http://localhost:5000/predict
+```
+
 # Vagrant
 To run the setup for creating and provisioning VMs with Vagrant and Ansible, you need to have Vagrant (https://developer.hashicorp.com/vagrant/install), Ansible (pip install ansible) and VirtualBox (https://www.virtualbox.org/wiki/Downloads) installed.
 
