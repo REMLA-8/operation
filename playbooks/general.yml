@@ -28,16 +28,20 @@
         enabled: yes
         state: started
 
-    - name: Add Kubernetes apt repository
-      shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-    - name: Add Kubernetes apt repository
-      apt_repository:
-        repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+    # - name: Add Kubernetes apt repository key
+    #   shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
-    - name: Install kubectl
-      apt:
-        name: kubectl
-        state: present
+    # - name: Add Kubernetes apt repository
+    #   apt_repository:
+    #     repo: "deb http://apt.kubernetes.io/ kubernetes-jammy main"
 
-    - name: Install Minikube
-      shell: curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+    # - name: Install kubectl
+    #   apt:
+    #     name: kubectl
+    #     state: present
+
+    # - name: Install Minikube
+    #   get_url:
+    #     url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 
+    #     dest: /usr/local/bin/minikube
+    #     mode: 0755
