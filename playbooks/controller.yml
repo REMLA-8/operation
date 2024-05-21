@@ -2,15 +2,20 @@
 - hosts: controller
   become: yes
   tasks:
-    - name: Pull the machine learning application Docker image
-      docker_image:
-        name: TODO #your-docker-image-name
-        source: pull
+    - name: Start Minikube
+      shell: minikube start --driver=docker
 
-    - name: Run the machine learning application Docker container
-      docker_container:
-        name: ml-app
-        image: TODO #your-docker-image-name
-        state: started
-        ports:
-          - "5000:5000"  # Adjust the port mapping as necessary
+    - name: Copy kubeconfig to user's home directory
+      copy:
+        src: /root/.kube/config
+        dest: /home/vagrant/.kube/config
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+        mode: 0600
+
+    - name: Set KUBECONFIG environment variable
+      lineinfile:
+        path: /home/vagrant/.bashrc
+        line: 'export KUBECONFIG=/home/vagrant/.kube/config'
+        create: yes

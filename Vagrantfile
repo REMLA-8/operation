@@ -19,14 +19,15 @@ Vagrant.configure("2") do |config|
     # Provision with Ansible
     control.vm.provision "ansible" do |a|
       a.compatibility_mode = "2.0"
-      # a.inventory = "inventory.cfg"
       a.playbook = "playbooks/general.yml"
     end
-    #Provision with Ansible
     control.vm.provision "ansible" do |a|
       a.compatibility_mode = "2.0"
-      # a.inventory = "inventory.cfg"
       a.playbook = "playbooks/controller.yml"
+    end
+    control.vm.provision "ansible" do |a|
+      a.compatibility_mode = "2.0"
+      a.playbook = "playbooks/monitoring.yml"
     end
   end
 
@@ -46,12 +47,10 @@ Vagrant.configure("2") do |config|
       # Provision with Ansible
       worker.vm.provision "ansible" do |a|
         a.compatibility_mode = "2.0"
-        # a.inventory = "inventory.cfg"
         a.playbook = "playbooks/general.yml"
       end
       worker.vm.provision "ansible" do |a|
         a.compatibility_mode = "2.0"
-        # a.inventory = "inventory.cfg"
         a.playbook = "playbooks/node.yml"
       end
     end
