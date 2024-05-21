@@ -34,11 +34,12 @@ Then by running:
 ```
 vagrant up
 ```
-And navigate to http://192.168.33.10:5000 to see the app.
+And navigate to http://192.168.56.10:5000 to see the app.
 
 However currently we still need to add the following:
 docker image name in playbooks/controller.yml
 additional ansible tasks
+To ensure this actually works.
 
 
 
