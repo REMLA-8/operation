@@ -27,6 +27,20 @@ lib-ml
 model-training
 (all other repos are filled with wrappers)
 
-App is not implemented yet
+# Vagrant
+To run the setup for creating and provisioning VMs with Vagrant and Ansible, you need to have Vagrant (https://developer.hashicorp.com/vagrant/install), Ansible (pip install ansible) and VirtualBox (https://www.virtualbox.org/wiki/Downloads) installed.
+
+Then by running:
+```
+vagrant up
+```
+And navigate to http://192.168.56.10:5000 to see the app.
+
+However currently we still need to add the following:
+docker image name in playbooks/controller.yml
+additional ansible tasks
+To ensure this actually works.
+
+
 
 
