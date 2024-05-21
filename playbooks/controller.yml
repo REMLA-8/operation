@@ -3,7 +3,7 @@
   become: yes
   tasks:
     - name: Start Minikube
-      shell: minikube start --driver=docker
+      shell: minikube start --driver=docker --apiserver-ips=192.168.56.10
 
     - name: Copy kubeconfig to user's home directory
       copy:
