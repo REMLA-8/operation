@@ -3,7 +3,7 @@ import httpx
 from  httpx import Client
 import pytest
 
-MODEL_SERVICE_URL = "http://localhost:5099"
+MODEL_SERVICE_URL = "http://localhost:5000"
 
 @pytest.fixture
 def service_client() -> Generator[Client, None, None]:

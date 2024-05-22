@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install basic packages
+      apt:
+        name:
+          - git
+          - curl
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    # - name: Add Kubernetes apt repository key
+    #   shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+    # - name: Add Kubernetes apt repository
+    #   apt_repository:
+    #     repo: "deb http://apt.kubernetes.io/ kubernetes-jammy main"
+
+    # - name: Install kubectl
+    #   apt:
+    #     name: kubectl
+    #     state: present
+
+    # - name: Install Minikube
+    #   get_url:
+    #     url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 
+    #     dest: /usr/local/bin/minikube
+    #     mode: 0755

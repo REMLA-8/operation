@@ -1,0 +1,21 @@
+---
+- hosts: controller
+  become: yes
+  tasks:
+    - name: Start Minikube
+      shell: minikube start --driver=docker --apiserver-ips=192.168.56.10
+
+    - name: Copy kubeconfig to user's home directory
+      copy:
+        src: /root/.kube/config
+        dest: /home/vagrant/.kube/config
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+        mode: 0600
+
+    - name: Set KUBECONFIG environment variable
+      lineinfile:
+        path: /home/vagrant/.bashrc
+        line: 'export KUBECONFIG=/home/vagrant/.kube/config'
+        create: yes
