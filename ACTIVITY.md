@@ -62,7 +62,7 @@ Approved PR: https://github.com/remla24-team8/model-service/pull/4
 
 Created PR: https://github.com/remla24-team8/lib-ml/pull/4
 
-Approved PR:
+Approved PR: https://github.com/remla24-team8/lib-version/pull/6
 
 -- Dielof: --
 
