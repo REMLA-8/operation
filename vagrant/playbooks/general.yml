@@ -1,0 +1,20 @@
+---
+- hosts: controller
+  roles:
+    - role: geerlingguy.docker
+      vars:
+        docker_users:
+          - vagrant
+  become: yes
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+    - name: Install Minikube
+      get_url:
+        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 
+        dest: /usr/local/bin/minikube
+        mode: 0755  
+
+    

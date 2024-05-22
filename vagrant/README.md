@@ -13,6 +13,23 @@ sudo apt install ./virtualbox.deb
 
 4. Use `vagrant ssh` to connect.
 
+5. Install ansible (`pipx install ansible`)
+
+6. Install Docker Ansible role: `ansible-galaxy role install geerlingguy.docker`
+
+7. Install kubectl on host machine: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
+
+
+### On guest
+
+1. Start minikube: `minikube start --driver=docker --listen-address=0.0.0.0`
+
+This will ensure it is available on the IP given by Vagrant.
+
+Below allows you to at least access the dashboard
+
+minikube kubectl -- proxy --address='0.0.0.0' --disable-filter=true
+
 ### Useful commands
 
 - `vagrant suspend` and `vagrant resume` saves the state of the VM and stops it and restarts it and reloads the state, respectively. `vagrant destroy` removes the VM completely.
