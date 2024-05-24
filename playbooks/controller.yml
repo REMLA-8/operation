@@ -1,21 +1,59 @@
 ---
-- hosts: controller
+- hosts: controllers
   become: yes
   tasks:
-    - name: Start Minikube
-      shell: minikube start --driver=docker --apiserver-ips=192.168.56.10
+    - name: Ensure the required directory exists
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
 
-    - name: Copy kubeconfig to user's home directory
-      copy:
-        src: /root/.kube/config
-        dest: /home/vagrant/.kube/config
-        remote_src: yes
-        owner: vagrant
-        group: vagrant
-        mode: 0600
+    - name: Download Kubernetes GPG key
+      get_url:
+        url: https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key
+        dest: /tmp/kubernetes-apt-keyring.gpg
 
-    - name: Set KUBECONFIG environment variable
-      lineinfile:
-        path: /home/vagrant/.bashrc
-        line: 'export KUBECONFIG=/home/vagrant/.kube/config'
-        create: yes
+    - name: Add Kubernetes GPG key
+      command: gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg /tmp/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes repository
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /"
+        filename: "kubernetes"
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install kubeadm, kubelet, and kubectl
+      apt:
+        name:
+          - kubeadm=1.28.1-1.1
+          - kubelet=1.28.1-1.1
+          - kubectl=1.28.1-1.1
+        state: present
+
+    - name: Hold Kubernetes packages
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+        mark_hold: yes
+
+    - name: Initialize Kubernetes cluster
+      command: kubeadm init --pod-network-cidr=192.168.0.0/16
+      register: init_output
+      ignore_errors: true
+
+    - name: Set up kubeconfig for root
+      command: "{{ item }}"
+      with_items:
+        - mkdir -p $HOME/.kube
+        - cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+        - chown $(id -u):$(id -g) $HOME/.kube/config
+
+    - name: Save kubeadm join command
+      set_fact:
+        join_command: "{{ init_output.stdout | regex_search('kubeadm join.*', '\\n') }}"

@@ -1,6 +1,6 @@
----
-- hosts: nodes
+- hosts: workers
   become: yes
   tasks:
-    - name: Join Minikube
-      shell: minikube start --driver=docker
+    - name: Join Kubernetes cluster
+      command: "{{ hostvars['controllers'][0].join_command }}"
+      ignore_errors: true

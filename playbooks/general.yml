@@ -10,11 +10,10 @@
     - name: Install basic packages
       apt:
         name:
-          - git
           - curl
-          - apt-transport-https
-          - ca-certificates
-          - software-properties-common
+          # - apt-transport-https
+          # - ca-certificates
+          # - software-properties-common
         state: present
 
     - name: Install Docker

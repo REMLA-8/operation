@@ -1,5 +1,4 @@
----
-- hosts: controller
+- hosts: controllers
   become: yes
   tasks:
     - name: Install Helm
