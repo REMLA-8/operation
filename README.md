@@ -11,12 +11,12 @@ code repo: https://github.com/REMLA-8/urlphishing/tree/a1
 
 ## Overview A2
 
-Operation https://github.com/remla24-team8/operation
-Lib-version https://github.com/remla24-team8/lib-version
-Lib-ml https://github.com/remla24-team8/lib-ml/tree/v0.1.2
-model-training https://github.com/remla24-team8/model-training
-model-service https://github.com/remla24-team8/model-service
-app https://github.com/remla24-team8/app
+- Operation https://github.com/remla24-team8/operation
+- Lib-version https://github.com/remla24-team8/lib-version
+- Lib-ml https://github.com/remla24-team8/lib-ml/tree/v0.1.2
+- model-training https://github.com/remla24-team8/model-training
+- model-service https://github.com/remla24-team8/model-service
+- app https://github.com/remla24-team8/app
 
 Notes
 
@@ -52,6 +52,13 @@ To ensure this actually works.
 
 ## Overview A4
 
+- Operation https://github.com/remla24-team8/operation (most of A3 is now done)
+- [Lib-version](https://github.com/remla24-team8/lib-version/releases/tag/v0.3.1) (unchanged)
+- [Lib-ml](https://github.com/remla24-team8/lib-ml/releases/tag/v0.1.5) (small change)
+- [model-training](https://github.com/remla24-team8/model-training/tree/a4) (most of the work for A4)
+- [model-service](https://github.com/remla24-team8/model-service/tree/v0.1.0) (no change)
+- [app-backend](https://github.com/remla24-team8/app-service/tree/v0.1.0) (A2 is now done)
+
 Testing has taken place in the model-training branch. Running
 
 ```
@@ -59,6 +66,8 @@ pytest
 ```
 
 in this branch or looking at the Action tab displays all testing results. Mutamorphic testing is still being worked on.
+
+Furthermore, work on A3 has now almost completed in the operation branch.
 
 
 
