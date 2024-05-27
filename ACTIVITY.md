@@ -77,3 +77,26 @@ Created PR: https://github.com/remla24-team8/lib-version/pull/4
 
 Approved PR: 
 
+
+# A4:
+
+
+-- Tip: --
+
+Created PR: 
+
+Approved PR:
+
+
+-- Felipe: --
+
+Created PR: https://github.com/remla24-team8/model-training/pull/3
+
+Approved PR: 
+
+-- Dielof: --
+
+Created PR: https://github.com/remla24-team8/model-training/pull/4
+
+Approved PR: https://github.com/remla24-team8/model-training/pull/3
+
