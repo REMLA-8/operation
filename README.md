@@ -36,7 +36,7 @@ To test the predict:
 curl --header "Content-Type: application/json" --request POST --data '{"url": ["google.com", "tudelft.nl"]}'  http://localhost:5000/predict
 ```
 
-# Vagrant
+## Vagrant
 To run the setup for creating and provisioning VMs with Vagrant and Ansible, you need to have Vagrant (https://developer.hashicorp.com/vagrant/install), Ansible (pip install ansible) and VirtualBox (https://www.virtualbox.org/wiki/Downloads) installed.
 
 Then by running:
@@ -49,6 +49,19 @@ However currently we still need to add the following:
 docker image name in playbooks/controller.yml
 additional ansible tasks
 To ensure this actually works.
+
+## Overview A4
+
+Testing has taken place in the model-training branch. Running
+
+```
+pytest
+```
+
+in this branch or looking at the Action tab displays all testing results. Mutamorphic testing is still being worked on.
+
+
+
 
 
 
