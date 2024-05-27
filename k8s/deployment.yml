@@ -1,15 +1,24 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: model-service-pod
+  name: model-service-deployment
   labels:
     app: model-service-pod
 spec:
-  containers:
-  - name: model-service-pod
-    image: ghcr.io/remla24-team8/model-service:v0.1.0
-    ports:
-    - containerPort: 5000
+  replicas: 2
+  selector:
+    matchLabels:
+      app: model-service-pod
+  template:
+    metadata:
+      labels:
+        app: model-service-pod
+    spec:
+      containers:
+      - name: model-service
+        image: ghcr.io/remla24-team8/model-service:v0.1.0
+        ports:
+        - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
@@ -23,22 +32,31 @@ spec:
     port: 5000
     targetPort: 5000
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: app-backend
+  name: app-backend-deployment
   labels:
     app: app-backend
 spec:
-  containers:
-  - name: app-backend
-    image: ghcr.io/remla24-team8/app-backend:main
-    ports:
-    - containerPort: 5000
-    env:
-      # this works if both are in the same namespace
-    - name: MODEL_SERVICE_URL
-      value: http://model-service:5000
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-backend
+  template:
+    metadata:
+      labels:
+        app: app-backend
+    spec:
+      containers:
+      - name: app-backend
+        image: ghcr.io/remla24-team8/app-backend:main
+        ports:
+        - containerPort: 5000
+        env:
+          # this works if both are in the same namespace
+        - name: MODEL_SERVICE_URL
+          value: http://model-service:5000
 ---
 apiVersion: v1
 kind: Service
