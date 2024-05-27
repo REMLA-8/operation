@@ -15,7 +15,7 @@ sudo apt install ./virtualbox.deb
 
 5. Install ansible (`pipx install ansible`)
 
-6. Install Docker Ansible role: `ansible-galaxy role install geerlingguy.docker`
+6. Install Docker Ansible role: `ansible-galaxy role install geerlingguy.docker` (currently not necessary)
 
 7. Install kubectl on host machine: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 

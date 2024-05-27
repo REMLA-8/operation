@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: model-service-pod
+  labels:
+    app: model-service-pod
+spec:
+  containers:
+  - name: model-service-pod
+    image: ghcr.io/remla24-team8/model-service:v0.1.0
+    ports:
+    - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-service
+spec:
+  selector:
+    app: model-service-pod
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-backend
+  labels:
+    app: app-backend
+spec:
+  containers:
+  - name: app-backend
+    image: ghcr.io/remla24-team8/app-backend:main
+    ports:
+    - containerPort: 5000
+    env:
+      # this works if both are in the same namespace
+    - name: MODEL_SERVICE_URL
+      value: http://model-service:5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-backend-service
+spec:
+  selector:
+    app: app-backend
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-backend-ingress
+  annotations:
+    # /$2 is the second capture group that we get below
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      # we get everything after api in the second capture group
+      # . is any char except newline
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: app-backend-service
+            port:
+              number: 5000
+  ingressClassName: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-frontend
+  labels:
+    app: app-frontend
+spec:
+  containers:
+  - name: app-frontend
+    image: ghcr.io/remla24-team8/app-frontend:main
+    ports:
+    - containerPort: 80
+    env:
+    - name: BACKEND_URL
+      value: 'http://10.10.10.0/api'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-frontend-service
+spec:
+  selector:
+    app: app-frontend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-frontend-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-frontend-service
+            port:
+              number: 3000
+  ingressClassName: nginx
