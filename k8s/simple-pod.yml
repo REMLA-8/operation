@@ -37,7 +37,7 @@ metadata:
   name: my-ingress
   annotations:
     # when we say path /abc refers to some service, we want to actually send it to the root of the service
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - http:

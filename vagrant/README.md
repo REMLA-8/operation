@@ -59,7 +59,7 @@ config.vm.network "private_network", type: "dhcp"
 
 This is useful because it does not require setting up port forwarding for every service, as anyone on the host can now talk to the nodes, as well as the nodes with each other (because they have a single address on the host).
 
-###
+### Add the 10.10.10.0 to allowed IP's for virtual box
 
 `/etc/vbox/networks.conf`:
 
@@ -80,3 +80,21 @@ Add IP addresses to pool
 
 Install nginx ingress controller
 `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml`
+
+
+Dashboard:
+`helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/`
+`helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard`
+`kubectl apply -f dashboard.yml`
+
+Go to https://10.10.10.0/dash (it's important you use HTTPS, be sure to also accept the warning)
+
+Create a service account to access it:
+```
+kubectl create serviceaccount jenkins
+kubectl create token jenkins
+# do below to grant full admin permissions specifically to service account 'jenkins'
+kubectl apply -f cluster-role.yml
+```
+
+Then you can paste the resulting token into the web browser.
