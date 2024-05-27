@@ -22,13 +22,16 @@ sudo apt install ./virtualbox.deb
 
 ### On guest
 
-1. Start minikube: `minikube start --driver=docker --listen-address=0.0.0.0`
+1. Set correct ip `export K3S_IP=$(hostname -I | cut -d' ' -f2)`
+1. Install k3s: `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--tls-san $K3S_IP --node-ip $K3S_IP" sh -` (the tls-san option ensures you can access it from the host-only network IP)
+
+2. Get the node-token: `sudo cat /var/lib/rancher/k3s/server/node-token`
+
+`curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-ip $K3S_IP" K3S_URL=https://192.168.56.4:6443 K3S_TOKEN=K10a2d24ba749bb7a93ca0ebd931f291eceb12f0173419f4298b44942bca803693c::server:8f870ad4fbfcfa645028b455753897e5 sh -`
 
 This will ensure it is available on the IP given by Vagrant.
 
-Below allows you to at least access the dashboard
-
-minikube kubectl -- proxy --address='0.0.0.0' --disable-filter=true
+`kubectl --kubeconfig k3s.yaml get pods --all-namespaces`
 
 ### Useful commands
 

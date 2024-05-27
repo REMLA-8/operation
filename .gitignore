@@ -1,3 +1,5 @@
 **/__pycache__
 .vagrant/
 kubectl*
+k8s/k3s.yaml
+vagrant/inventory.cfg
