@@ -1,6 +1,0 @@
----
-- hosts: controller
-  become: yes
-  tasks:
-    - name: Install K3s server
-      shell: K3S_IP=$(hostname -I | cut -d' ' -f2) && curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--tls-san $K3S_IP --node-ip $K3S_IP" sh -

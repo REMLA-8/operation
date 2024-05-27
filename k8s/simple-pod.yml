@@ -1,48 +1,54 @@
+# below we define what we will actually run
 apiVersion: v1
 kind: Pod
 metadata:
   name: nginx
+  # the label allows us to refer to this in a service
   labels:
     app: nginx
 spec:
   containers:
   - name: nginx
+    # this is the docker image
     image: nginx
     ports:
+    # this is the port that this service will start the container on, it must be targeted by a service
     - containerPort: 80
 ---
+# a service is a way to expose some application
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  name: my-app-service
 spec:
   selector:
+    # we select the 'app: nginx' above
     app: nginx
   ports:
+    # this port is where the service will be available from
   - port: 1234
+    # this must match the containerPort above
     targetPort: 80
 ---
-apiVersion: helm.cattle.io/v1
-kind: HelmChartConfig
+# ingress defines a way for the outside world to then access our service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: traefik
-  namespace: kube-system
+  name: my-ingress
+  annotations:
+    # when we say path /abc refers to some service, we want to actually send it to the root of the service
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  valuesContent: |-
-    ports:
-      nginx:
-        port: 80
-        expose: true
-        exposedPort: 1234
-        protocol: TCP
-
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: my-ingress
-# spec:
-#   defaultBackend:
-#     service:
-#       name: my-service
-#       port:
-#         number: 1234
+  rules:
+  - http:
+      paths:
+      # accessing the external ip at port 80/443 (since we use nginx ingress controller) at path /abc will then forward to port 1234 of my-app-service
+      - path: /abc
+        pathType: Prefix
+        backend:
+          service:
+            name: my-app-service
+            port:
+              number: 1234
+  # this is necessary to indicate we want to use the nginx ingress controller
+  ingressClassName: nginx

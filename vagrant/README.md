@@ -58,3 +58,25 @@ config.vm.network "private_network", type: "dhcp"
 ```
 
 This is useful because it does not require setting up port forwarding for every service, as anyone on the host can now talk to the nodes, as well as the nodes with each other (because they have a single address on the host).
+
+###
+
+`/etc/vbox/networks.conf`:
+
+```
+* 10.10.10.0/24 192.168.56.0/21
+```
+
+
+### MetalLB
+
+https://metallb.universe.tf/
+
+Install MetalLB 
+`kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml`
+
+Add IP addresses to pool
+`kubectl apply -f metal-pool.yml`
+
+Install nginx ingress controller
+`kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml`
