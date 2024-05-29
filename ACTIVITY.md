@@ -83,16 +83,16 @@ Approved PR:
 
 -- Tip: --
 
-Created PR: 
+Created PR: https://github.com/remla24-team8/model-training/pull/5
 
-Approved PR:
+Approved PR: https://github.com/remla24-team8/model-training/pull/4
 
 
 -- Felipe: --
 
 Created PR: https://github.com/remla24-team8/model-training/pull/3
 
-Approved PR: 
+Approved PR: https://github.com/remla24-team8/model-training/pull/5
 
 -- Dielof: --
 
