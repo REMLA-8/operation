@@ -27,8 +27,9 @@ kubectl apply -f deployment.yml
 
 # Apply Prometheus configurations
 kubectl create namespace monitoring
-kubectl apply -f ./prometheus/clusterRole.yml
-kubectl apply -f ./prometheus/config-map.yml
-kubectl apply -f ./prometheus/prometheus-deployment.yml
-kubectl apply -f ./prometheus/prometheus-service.yml
-kubectl apply -f ./prometheus/prometheus-ingress.yml
+kubectl apply -f ./prometheus/clusterRole.yml -n monitoring
+kubectl apply -f ./prometheus/config-map.yml -n monitoring
+kubectl apply -f ./prometheus/prometheus-deployment.yml -n monitoring
+kubectl apply -f ./prometheus/prometheus-service.yml -n monitoring
+kubectl apply -f ./prometheus/prometheus-ingress.yml -n monitoring
+
