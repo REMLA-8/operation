@@ -6,13 +6,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: prometheus.example.com
-    http:
+  - http:
       paths:
-      - path: /
+      - path: /prometheus
         pathType: Prefix
         backend:
           service:
             name: prometheus-service
             port:
-              number: 8080
+              number: 9090

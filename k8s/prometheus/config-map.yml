@@ -7,6 +7,8 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 15s
+    rule_files:
+    - /etc/prometheus/alert-rules.yml
     scrape_configs:
     - job_name: 'prometheus'
       static_configs:
@@ -14,3 +16,15 @@ data:
     - job_name: 'app-backend'
       static_configs:
       - targets: ['app-backend-service.default.svc.cluster.local:5000']
+  alert-rules.yml: |
+    groups:
+    - name: example
+      rules:
+      - alert: HighErrorRate
+        expr: job:request_errors:rate5m{job="app-backend"} > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: High request error rate on app-backend
+          description: "Error rate is {{ $value }} over the last 5 minutes."
