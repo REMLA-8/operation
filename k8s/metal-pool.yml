@@ -1,0 +1,15 @@
+# we define a list of ip addresses that can be given out by our load balancer
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 10.10.10.0-10.10.10.99
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: metallb-ad
+  namespace: metallb-system
