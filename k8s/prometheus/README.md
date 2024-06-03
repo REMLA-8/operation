@@ -42,23 +42,23 @@ Port Forward to Access Grafana:
     kubectl --namespace monitoring port-forward $POD_NAME 3000
 ```
 
-    Access Grafana at http://localhost:3000.
+Access Grafana at http://localhost:3000.
 
-    Login to Grafana:
-        Username: admin
-        Password: Retrieved in the previous step
+Login to Grafana:
+Username: admin
+Password: Retrieved in the previous step
 
-4. Configure Grafana Dashboard
+### 4. Configure Grafana Dashboard
 
-    Add Prometheus Data Source:
-        Go to Grafana Home.
-        Click on Configuration > Data Sources.
-        Click Add data source.
-        Select Prometheus.
-        Set the URL to http://prometheus-service.monitoring.svc.cluster.local:8080.
-        Click Save & Test.
+Add Prometheus Data Source:
+Go to Grafana Home.
+Click on Configuration > Data Sources.
+Click Add data source.
+Select Prometheus.
+Set the URL to http://prometheus-service.monitoring.svc.cluster.local:8080.
+Click Save & Test.
 
-    Import Dashboard:
-        Click on + > Import.
-        Upload the prometheus/grafana_dashboard.json file or copy the JSON content.
-        Click Load.
+Import Dashboard:
+Click on + > Import.
+Upload the prometheus/grafana_dashboard.json file or copy the JSON content.
+Click Load.
