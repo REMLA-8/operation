@@ -10,7 +10,7 @@
 ### 1. Full Deployment Script
 Use the provided `full_deploy.sh` script to automate the deployment of Prometheus, Grafana, and your application.
 
-### Run the script
+Run the script
 
 ```
 chmod +x full_deploy.sh
@@ -28,7 +28,7 @@ sudo ./full_deploy.sh
 
 ### 3. Access Grafana Dashboard
 
-    Get Grafana Admin Password:
+Get Grafana Admin Password:
 
 ```
 kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
