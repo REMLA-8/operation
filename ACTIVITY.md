@@ -100,3 +100,26 @@ Created PR: https://github.com/remla24-team8/model-training/pull/4
 
 Approved PR: https://github.com/remla24-team8/model-training/pull/3
 
+
+# A5:
+
+
+-- Tip: --
+
+Created PR: https://github.com/remla24-team8/operation/pull/8
+
+Approved PR: https://github.com/remla24-team8/lib-version/pull/7
+
+
+-- Felipe: --
+
+Created PR: https://github.com/remla24-team8/app-service/pull/5
+
+Approved PR: https://github.com/remla24-team8/operation/pull/8
+
+-- Dielof: --
+
+Created PR: https://github.com/remla24-team8/app-frontend/pull/6
+
+Approved PR: https://github.com/remla24-team8/app-service/pull/5
+
