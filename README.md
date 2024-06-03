@@ -71,9 +71,14 @@ in this branch or looking at the Action tab displays all testing results. Mutamo
 
 Furthermore, work on A3 has now almost completed in the operation branch.
 
+## Overview A5
 
+- Operation https://github.com/remla24-team8/operation (Prometheus/Grafana is now set up, also tried Istio but did not succeed)
+- [Lib-version](https://github.com/remla24-team8/lib-version) (works now)
+- [Lib-ml](https://github.com/remla24-team8/lib-ml) (no change)
+- [model-training](https://github.com/remla24-team8/model-training) (no change)
+- [model-service](https://github.com/remla24-team8/model-service) (no change)
+- [app-backend](https://github.com/remla24-team8/app-service) (now uses lib-version)
 
-
-
-
+We did not succeed in setting up Istio, so instead focused on finishing up work from previous weeks.
 
