@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-service-deployment-v2
+  labels:
+    app: model-service-pod
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-service-pod
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: model-service-pod
+        version: v2
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - name: model-service
+        image: ghcr.io/remla24-team8/model-service:v0.2.0
+        ports:
+        - containerPort: 5000
