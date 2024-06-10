@@ -12,7 +12,7 @@ services:
       retries: 15
 
   app-backend:
-    image: ghcr.io/remla24-team8/app-backend:main
+    image: ghcr.io/remla24-team8/app-backend:v0.2.1
     container_name: app-backend
     depends_on:
      model-service:
@@ -23,7 +23,7 @@ services:
       MODEL_SERVICE_URL: 'http://model-service:5000'
       
   app-frontend:
-    image: ghcr.io/remla24-team8/app-frontend:main
+    image: ghcr.io/remla24-team8/app-frontend:v0.1.1
     container_name: app-frontend
     depends_on:
      model-service:
