@@ -123,3 +123,6 @@ Created PR: https://github.com/remla24-team8/app-frontend/pull/6
 
 Approved PR: https://github.com/remla24-team8/app-service/pull/5
 
+# A6:
+
+We all contributed to the report: https://github.com/remla24-team8/operation/pull/10
