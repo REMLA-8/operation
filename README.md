@@ -82,3 +82,17 @@ Furthermore, work on A3 has now almost completed in the operation branch.
 
 We did not succeed in setting up Istio, so instead focused on finishing up work from previous weeks.
 
+## Overview A6
+
+The report can be found in `report.pdf` in this repository.
+
+The report is still missing critical sections as we cannot write the parts about the code we have not yet finished, so we have mostly focused on the release and ML/testing parts.
+
+The containers have now been reversioned and tagged and the operation version uses the right tags for the Docker Compose, so now the test also works again.
+
+- Operation https://github.com/remla24-team8/operation (report added, work on istio but [unfinished](https://github.com/remla24-team8/operation/tree/istio-felip))
+- [Lib-version](https://github.com/remla24-team8/lib-version) (no change)
+- [Lib-ml](https://github.com/remla24-team8/lib-ml) (no change)
+- [model-training](https://github.com/remla24-team8/model-training) (test improvements)
+- [model-service](https://github.com/remla24-team8/model-service) (no change)
+- [app-backend](https://github.com/remla24-team8/app-service) (no change)
