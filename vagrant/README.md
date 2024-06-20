@@ -29,9 +29,11 @@ sudo apt install ./virtualbox.deb
 
 1. Install kubectl on host machine: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 
-2. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` or you can pass `--kubeconfig k3s.yaml` each time.
+2. Instal `helm`: `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash`
 
-3. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB it's not practical to package this in a single chart. In the future we will look into `helmfile` or other options. You can also erun the `./full_deploy.sh` file, which will run all of the below. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run.
+3. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` or you can pass `--kubeconfig k3s.yaml` each time.
+
+4. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB it's not practical to package this in a single chart. In the future we will look into `helmfile` or other options. You can also erun the `./full_deploy.sh` file, which will run all of the below. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run.
 
 ```
 export KUBECONFIG=k3s.yaml
