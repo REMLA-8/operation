@@ -42,7 +42,7 @@ helm upgrade --install metallb metallb \
   --namespace metallb-system --create-namespace
 
 # Make loadbalancer available
-kubectl apply -f metal-pool.yml`
+kubectl apply -f metal-pool.yml
 
 # Install nginx ingress controller
 helm upgrade --install ingress-nginx ingress-nginx \
