@@ -1,4 +1,5 @@
 # Prometheus and Grafana Setup on Kubernetes
+**This is not necessary if you have followed the readme in the vagrant folder.**
 
 ## Prerequisites
 - A running Kubernetes cluster
@@ -21,17 +22,18 @@ sudo ./full_deploy.sh
     Port Forwarding:
 
 ```
-    kubectl port-forward -n monitoring svc/prometheus-service 9090:9090
+    kubectl port-forward -n monitoring svc/prometheus-service 9090:8080
 
-    Access Prometheus at http://localhost:9090.
+    
 ```
+Access Prometheus at http://localhost:9090.
 
 ### 3. Access Grafana Dashboard
 
 Get Grafana Admin Password:
 
 ```
-kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+kubectl get secret --namespace monitoring -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
 
 Port Forward to Access Grafana:
