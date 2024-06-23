@@ -97,10 +97,17 @@ config.vm.network "private_network", type: "dhcp"
 
 This is useful because it does not require setting up port forwarding for every service, as anyone on the host can now talk to the nodes, as well as the nodes with each other (because they have a single address on the host).
 
-6. In order to launch grafana open a new terminal run `export KUBECONFIG=k3s.yaml`. 
+6. 
+When needing port forwarding write the following line in the terminal to expose the prometheus service.
+
+```
+kubectl port-forward -n monitoring svc/prometheus-service 8080:8080
+```
+In order to launch grafana open a new terminal run `export KUBECONFIG=k3s.yaml`. 
 Then check if the kubectl is reachable with `kubectl get nodes`.
 
 By running the following command the grafana interface will be launched
 ```
 ./prometheus/grafana_deploy.sh 
 ```
+Then make your way to http://localhost:3000/ to find grafana, username:admin and password is returned by the grafana_deploy script.
