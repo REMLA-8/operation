@@ -49,18 +49,38 @@ echo "Grafana is now accessible via NodePort on port 32000 of any cluster node."
 echo "Access Grafana at: http://<node-ip>:32000"
 echo "Login with username 'admin' and the password retrieved above."
 
+# Create Grafana API Token
+GRAFANA_URL="http://localhost:3000"
+
+# Current date and time as a unique identifier
+UNIQUE_ID=$(date +%s+h)
+
+echo "Creating Grafana API token..."
+API_RESPONSE=$(curl -s -X POST $GRAFANA_URL/api/auth/keys \
+  -H "Content-Type: application/json" \
+  -u admin:$ADMIN_PASSWORD \
+  -d "{\"name\":\"automation-${UNIQUE_ID}\", \"role\":\"Admin\"}")
+
+GRAFANA_TOKEN=$(echo $API_RESPONSE | python3 -c "import sys, json; print(json.load(sys.stdin).get('key', 'No token generated'))")
+
+if [ "$GRAFANA_TOKEN" != "No token generated" ]; then
+    echo "Generated Grafana API token: $GRAFANA_TOKEN"
+else
+    echo "Failed to generate Grafana API token. Response was: $API_RESPONSE"
+    exit 1
+fi
+
 # Prometheus service URL
 PROMETHEUS_URL="http://prometheus-service.monitoring.svc.cluster.local:8080"
 
 # Create Prometheus datasource using Grafana API
-GRAFANA_URL="http://localhost:3000"
 echo "Creating Prometheus datasource in Grafana..."
 curl -X POST $GRAFANA_URL/api/datasources \
   -H "Content-Type: application/json" \
   -u admin:$ADMIN_PASSWORD \
   -d '{
-    "name": "Prometheus9",
-    "type": "prometheus9",
+    "name": "Prometheus",
+    "type": "prometheus",
     "url": "'"$PROMETHEUS_URL"'",
     "access": "proxy",
     "isDefault": true
@@ -69,16 +89,16 @@ echo "Prometheus datasource created successfully."
 
 # Deploy the dashboard
 echo "Deploying dashboard..."
-curl -X POST $GRAFANA_URL/api/dashboards/db \
+curl -v -X POST $GRAFANA_URL/api/dashboards/db \
   -H "Content-Type: application/json" \
-  -u admin:$ADMIN_PASSWORD \
+  -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/grafana_dashboard.json
-echo "Dashboard deployed successfully."
+echo "Dashboard deployed."
 
 # Deploy alert rules
 echo "Deploying alert rules..."
 curl -X POST $GRAFANA_URL/api/ruler/grafana/api/v1/rules \
   -H "Content-Type: application/json" \
-  -u admin:$ADMIN_PASSWORD \
+  -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/alert-rules.json
-echo "Alert rules deployed successfully."
+echo "Alert rules deployed."
