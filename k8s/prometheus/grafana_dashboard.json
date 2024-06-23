@@ -35,7 +35,10 @@
       "type": "row"
     },
     {
-      "datasource": {},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "fdpnexky01ssga"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -114,12 +117,11 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "scam_percentage",
-          "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -133,7 +135,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": {},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "fdpnexky01ssga"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -184,7 +189,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -192,7 +197,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "{{label_name}}",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -202,7 +207,10 @@
       "type": "gauge"
     },
     {
-      "datasource": {},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "fdpnexky01ssga"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -281,27 +289,27 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "prediction_requests_total",
+          "expr": "page_requests_total",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{ __name__}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Prediction Request",
+      "title": "Total Prediction Request",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "edpna2jcfgv0gb"
+        "uid": "fdpnexky01ssga"
       },
       "fieldConfig": {
         "defaults": {
@@ -353,7 +361,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -373,7 +381,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "edpna2jcfgv0gb"
+        "uid": "fdpnexky01ssga"
       },
       "fieldConfig": {
         "defaults": {
@@ -478,7 +486,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -486,7 +494,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
-          "legendFormat": "{{0.9 - Quantile}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -494,7 +502,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -503,7 +511,7 @@
           "hide": false,
           "includeNullMetadata": false,
           "instant": false,
-          "legendFormat": "{{0.95 - Quantile}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -511,7 +519,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "fdpn17drl0veoc"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -520,7 +528,7 @@
           "hide": false,
           "includeNullMetadata": false,
           "instant": false,
-          "legendFormat": "{{0.99 - Quantile}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "C",
           "useBackend": false
@@ -619,7 +627,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "edpna2jcfgv0gb"
+        "uid": "fdpnexky01ssga"
       },
       "fieldConfig": {
         "defaults": {
@@ -699,7 +707,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "edpna2jcfgv0gb"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -707,7 +715,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
-          "legendFormat": "{{label_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -719,7 +727,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "edpna2jcfgv0gb"
+        "uid": "fdpnexky01ssga"
       },
       "fieldConfig": {
         "defaults": {
@@ -799,15 +807,15 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "edpna2jcfgv0gb"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
           "expr": "rate(page_requests_created[$__rate_interval])",
           "fullMetaSearch": false,
-          "includeNullMetadata": false,
+          "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{label_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -819,7 +827,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "edpna2jcfgv0gb"
+        "uid": "fdpnexky01ssga"
       },
       "fieldConfig": {
         "defaults": {
@@ -899,21 +907,21 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "edpna2jcfgv0gb"
+            "uid": "fdpnexky01ssga"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "rate(go_memstats_alloc_bytes[$__rate_interval])",
+          "expr": "go_memstats_alloc_bytes",
           "fullMetaSearch": false,
-          "includeNullMetadata": false,
+          "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{label_name}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Allocated memory [current interval]",
+      "title": "Allocated memory ",
       "type": "timeseries"
     }
   ],
@@ -932,6 +940,6 @@
   "timezone": "browser",
   "title": "Prediction App Metrics",
   "uid": "uuid",
-  "version": 3,
+  "version": 6,
   "weekStart": ""
 }
