@@ -14,6 +14,9 @@
   "labels": {
     "API": "test1"
   },
+  "notification_settings": {
+    "receiver": "Alert Notifications"
+  },
   "data": [
     {
       "refId": "A",
