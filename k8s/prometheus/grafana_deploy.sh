@@ -53,7 +53,7 @@ echo "Login with username 'admin' and the password retrieved above."
 GRAFANA_URL="http://localhost:3000"
 
 # Current date and time as a unique identifier
-UNIQUE_ID=$(date +%s+h)
+UNIQUE_ID=$(date +%s)
 
 echo "Creating Grafana API token..."
 API_RESPONSE=$(curl -s -X POST $GRAFANA_URL/api/auth/keys \
@@ -87,6 +87,23 @@ curl -X POST $GRAFANA_URL/api/datasources \
   }'
 echo "Prometheus datasource created successfully."
 
+echo "Fetch prometheus datasource uid"
+# Fetch datasource details
+response=$(curl -s -H "Authorization: Bearer $GRAFANA_TOKEN" "$GRAFANA_URL/datasources")
+
+# Extract the UID of Prometheus datasource
+prometheus_uid=$(echo $response | jq -r '.[] | select(.type=="prometheus" and .name=="Prometheus") | .uid')
+
+# Replace the placeholder UID in the JSON file
+sed -i "s/placeholder_uid/$prometheus_uid/g" "prometheus/grafana_dashboard.json"
+# Update Prometheus datasource UID
+sed -i "s/datasource_placeholder_uid/$prometheus_uid/g" "prometheus/alert-rules.json"
+# Update Rule UID if necessary
+sed -i "s/rule_placeholder_uid/rule_uid/g" "prometheus/alert-rules.json"
+# Update Notification UID
+# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert-rules.json"
+
+
 # Deploy the dashboard
 echo "Deploying dashboard..."
 curl -v -X POST $GRAFANA_URL/api/dashboards/db \
@@ -95,10 +112,29 @@ curl -v -X POST $GRAFANA_URL/api/dashboards/db \
   -d @prometheus/grafana_dashboard.json
 echo "Dashboard deployed."
 
+echo "Setting up contact point"
+response=$(curl -s -X POST "$GRAFANA_URL/api/v1/provisioning/contact-points" \
+   -H "Content-Type: application/json" \
+   -H "Authorization: Bearer $GRAFANA_TOKEN" \
+   -H "X-Disable-Provenance: true" \
+   -d "@prometheus/contact_email.json")
+echo "$response"
+
+
 # Deploy alert rules
 echo "Deploying alert rules..."
-curl -X POST $GRAFANA_URL/api/ruler/grafana/api/v1/rules \
+curl -s -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/alert-rules.json
 echo "Alert rules deployed."
+
+# #Revert placeholder changes
+# # Replace the placeholder UID in the JSON file
+# sed -i "s/$prometheus_uid/placeholder_uid/g" "prometheus/grafana_dashboard.json"
+# # Update Prometheus datasource UID
+# sed -i "s/$prometheus_uid/datasource_placeholder_uid/g" "prometheus/alert-rules.json"
+# # Update Rule UID if necessary
+# sed -i "s/rule_uid/rule_placeholder_uid/g" "prometheus/alert-rules.json"
+# Update Notification UID
+# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert-rules.json"

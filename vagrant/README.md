@@ -106,6 +106,9 @@ kubectl port-forward -n monitoring svc/prometheus-service 8080:8080
 In order to launch grafana open a new terminal run `export KUBECONFIG=k3s.yaml`. 
 Then check if the kubectl is reachable with `kubectl get nodes`.
 
+Make sure jq is installed on a linux system. `sudo apt-get install jq`.
+
+
 By running the following command the grafana interface will be launched
 ```
 ./prometheus/grafana_deploy.sh 

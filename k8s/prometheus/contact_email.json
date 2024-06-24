@@ -1,0 +1,11 @@
+{
+    "name": "Alert Notifications",
+    "type": "email",
+    "settings": {
+      "addresses": "F.R.G.BononiBello@student.tudelft.nl"
+    },
+    "orgId": 1,
+    "uid": "unique-contact-point-uid-G8",
+    "disableResolveMessage": false
+  }
+  
