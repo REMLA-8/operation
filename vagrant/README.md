@@ -21,17 +21,21 @@ sudo apt install ./virtualbox.deb
 
 4. Install ansible (`pipx install ansible`). If you don't have pipx, it's probably easiest to install it using `sudo apt install pipx` (see [here](https://pipx.pypa.io/stable/) for other instructions).
 
-5. Run `vagrant up --provision`. This will install and run kubernetes (we use the k3s distribution, which makes it much easier to connect to from an external host, we disable most of its included add-ons to make it closer to a minikube installation) on the host and agent. This is not yet very secure, as it uses the `mytoken` as a hard-coded token. It relies on the main server node being 10.10.10.100.
+5. Ensure you are in the `operation/vagrant` directory.
 
-6. Run `./get_k8s_config.sh` to move the kubernetes config to the `k8s` folder in this repository (password is `vagrant`). If this worked, you can move the Kubernets part.
+6. Run `vagrant up --provision`. This will install and run kubernetes (we use the k3s distribution, which makes it much easier to connect to from an external host, we disable most of its included add-ons to make it closer to a minikube installation) on the host and agent. This is not yet very secure, as it uses the `mytoken` as a hard-coded token. It relies on the main server node being 10.10.10.100.
+
+7. Run `./get_k8s_config.sh` to move the kubernetes config to the `k8s` folder in this repository (password is `vagrant`). If this worked, you can move the Kubernets part.
 
 ### Kubernetes
 
 1. Install kubectl on host machine: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 
-2. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` or you can pass `--kubeconfig k3s.yaml` each time.
+2. Instal `helm`: `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash`
 
-3. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB it's not practical to package this in a single chart. In the future we will look into `helmfile` or other options. You can also erun the `./full_deploy.sh` file, which will run all of the below. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run.
+3. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` once per shell or you can pass `--kubeconfig k3s.yaml` each command.
+
+4. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB it's not practical to package this in a single chart. In the future we will look into `helmfile` or other options. You can also run the `./full_deploy.sh` file, which will run all of the below. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run.
 
 ```
 export KUBECONFIG=k3s.yaml
@@ -96,6 +100,7 @@ config.vm.network "private_network", type: "dhcp"
 ```
 
 This is useful because it does not require setting up port forwarding for every service, as anyone on the host can now talk to the nodes, as well as the nodes with each other (because they have a single address on the host).
+
 
 6. 
 When needing port forwarding write the following line in the terminal to expose the prometheus service.
