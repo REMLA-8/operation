@@ -70,6 +70,21 @@ else
     exit 1
 fi
 
+
+echo "Creating folder in Grafana..."
+FOLDER_RESPONSE=$(curl -s -X POST $GRAFANA_URL/api/folders \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $GRAFANA_TOKEN" \
+  -d '{"title": "GrafanaRules"}')
+
+FOLDER_UID=$(echo $FOLDER_RESPONSE | jq -r '.uid')
+
+if [ "$FOLDER_UID" == "null" ]; then
+    echo "Failed to create folder. Response was: $FOLDER_RESPONSE"
+else
+    echo "Folder created with UID: $FOLDER_UID"
+fi
+
 # Prometheus service URL
 PROMETHEUS_URL="http://prometheus-service.monitoring.svc.cluster.local:8080"
 
@@ -89,27 +104,36 @@ echo "Prometheus datasource created successfully."
 
 echo "Fetch prometheus datasource uid"
 # Fetch datasource details
-response=$(curl -s -H "Authorization: Bearer $GRAFANA_TOKEN" "$GRAFANA_URL/datasources")
+response_prom=$(curl -s -H "Authorization: Bearer $GRAFANA_TOKEN" "$GRAFANA_URL/datasources")
 
 # Extract the UID of Prometheus datasource
-prometheus_uid=$(echo $response | jq -r '.[] | select(.type=="prometheus" and .name=="Prometheus") | .uid')
+prometheus_uid=$(echo $response_prom | jq -r '.[] | select(.type=="prometheus" and .name=="Prometheus") | .uid')
+
+
+
+
+cp prometheus/json/grafana_dashboard.json prometheus/json/temp_grafana_dashboard.json
+cp prometheus/json/alert_rules.json prometheus/json/temp_alert_rules.json
+
 
 # Replace the placeholder UID in the JSON file
-sed -i "s/placeholder_uid/$prometheus_uid/g" "prometheus/grafana_dashboard.json"
+sed -i "s/placeholder_uid/$prometheus_uid/g" "prometheus/json/temp_grafana_dashboard.json"
 # Update Prometheus datasource UID
-sed -i "s/datasource_placeholder_uid/$prometheus_uid/g" "prometheus/alert-rules.json"
+sed -i "s/datasource_placeholder_uid/$prometheus_uid/g" "prometheus/json/temp_alert_rules.json"
 # Update Rule UID if necessary
-sed -i "s/rule_placeholder_uid/rule_uid/g" "prometheus/alert-rules.json"
+sed -i "s/rule_placeholder_uid/rule_uid/g" "prometheus/json/temp_alert_rules.json"
+# Use sed to replace the placeholder
+sed -i "s/folder_placeholder_uid/$FOLDER_UID/g" "prometheus/json/temp_alert_rules.json"
 # Update Notification UID
-# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert-rules.json"
+# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert_rules.json"
 
 
 # Deploy the dashboard
 echo "Deploying dashboard..."
-curl -v -X POST $GRAFANA_URL/api/dashboards/db \
+curl -s -X POST $GRAFANA_URL/api/dashboards/db \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
-  -d @prometheus/grafana_dashboard.json
+  -d @prometheus/json/temp_grafana_dashboard.json
 echo "Dashboard deployed."
 
 echo "Setting up contact point"
@@ -117,24 +141,18 @@ response=$(curl -s -X POST "$GRAFANA_URL/api/v1/provisioning/contact-points" \
    -H "Content-Type: application/json" \
    -H "Authorization: Bearer $GRAFANA_TOKEN" \
    -H "X-Disable-Provenance: true" \
-   -d "@prometheus/contact_email.json")
+   -d "@prometheus/json/contact_email.json")
 echo "$response"
 
 
 # Deploy alert rules
 echo "Deploying alert rules..."
-curl -s -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
+curl -v -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
-  -d @prometheus/alert-rules.json
+  -d @prometheus/json/temp_alert_rules.json
 echo "Alert rules deployed."
 
-# #Revert placeholder changes
-# # Replace the placeholder UID in the JSON file
-# sed -i "s/$prometheus_uid/placeholder_uid/g" "prometheus/grafana_dashboard.json"
-# # Update Prometheus datasource UID
-# sed -i "s/$prometheus_uid/datasource_placeholder_uid/g" "prometheus/alert-rules.json"
-# # Update Rule UID if necessary
-# sed -i "s/rule_uid/rule_placeholder_uid/g" "prometheus/alert-rules.json"
-# Update Notification UID
-# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert-rules.json"
+# Remove the temporary file after use
+rm prometheus/json/temp_grafana_dashboard.json
+rm prometheus/json/temp_alert_rules.json

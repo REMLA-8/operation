@@ -1,0 +1,74 @@
+{
+  "title": "Request_Rate",
+  "ruleGroup": "API",
+  "folderUID": "folder_placeholder_uid",
+  "noDataState": "OK",
+  "execErrState": "OK",
+  "for": "5m",
+  "orgId": 1,
+  "uid": "",
+  "condition": "B",
+  "annotations": {
+    "summary": "Number of Requests has exceeded the set threshold."
+  },
+  "labels": {
+    "API": "test1"
+  },
+  "data": [
+    {
+      "refId": "A",
+      "queryType": "",
+      "relativeTimeRange": {
+        "from": 600,
+        "to": 0
+      },
+      "datasourceUid": "datasource_placeholder_uid",
+      "model": {
+        "expr": "rate(page_requests_created[1m])",
+        "hide": false,
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "refId": "A"
+      }
+    },
+    {
+      "refId": "B",
+      "queryType": "",
+      "relativeTimeRange": {
+        "from": 0,
+        "to": 0
+      },
+      "datasourceUid": "-100",
+      "model": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [0.1],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": ["A"]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "datasource": {
+          "type": "__expr__",
+          "uid": "-100"
+        },
+        "hide": false,
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "refId": "B",
+        "type": "classic_conditions"
+      }
+    }
+  ]
+}
