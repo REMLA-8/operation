@@ -13,7 +13,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 
 # Install or upgrade Grafana
-helm upgrade --install grafana grafana/grafana --namespace $NAMESPACE --create-namespace --wait
+helm upgrade --install grafana grafana/grafana --namespace $NAMESPACE --create-namespace  --wait
 
 # Create a NodePort service for Grafana
 cat <<EOF | kubectl apply -f -
@@ -77,7 +77,7 @@ echo "Creating folder in Grafana..."
 FOLDER_RESPONSE=$(curl -s -X POST $GRAFANA_URL/api/folders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
-  -d '{"title": "AGrafana_r"}')
+  -d "{\"title\": \"Grafana-${UNIQUE_ID}\"}")
 
 FOLDER_UID=$(echo $FOLDER_RESPONSE | jq -r '.uid')
 
@@ -137,7 +137,7 @@ response=$(curl -s -X POST "$GRAFANA_URL/api/v1/provisioning/contact-points" \
    -H "Content-Type: application/json" \
    -H "Authorization: Bearer $GRAFANA_TOKEN" \
    -H "X-Disable-Provenance: true" \
-   -d "@prometheus/json/contact_email.json")
+   -d "@prometheus/json/discord_alert.json")
 echo "$response"
 
 

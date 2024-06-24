@@ -1,0 +1,14 @@
+
+{
+  "name": "Alert Notifications",
+  "type": "discord",
+  "settings": {
+    "url": "https://discord.com/api/webhooks/1254869784110043258/PNhsXnpQMJXsewvkqAtC_gariqgNraXFxbD6iOxui3q8SwueBlyaUP66Sx7Lm-Bi2bPY",
+    "title": "Grafana Alert",
+    "content": "Alert details from Grafana",  
+    "use_discord_username": false 
+  },
+  "orgId": 1,
+  "uid": "unique-contact-point-uid-G8-2",
+  "disableResolveMessage": false
+}
