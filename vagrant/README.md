@@ -114,3 +114,5 @@ By running the following command the grafana interface will be launched
 ./prometheus/grafana_deploy.sh 
 ```
 Then make your way to http://localhost:3000/ to find grafana, username:admin and password is returned by the grafana_deploy script.
+
+The Alert rules will fire in a discord channel. 

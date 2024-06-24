@@ -26,12 +26,13 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 3011
+    targetPort: 3000
     nodePort: 32000
   selector:
     app.kubernetes.io/name: grafana
 EOF
 
+echo "    "
 # Retrieve the admin password
 ADMIN_PASSWORD=$(kubectl get secret --namespace $NAMESPACE grafana -o jsonpath="{.data.admin-password}" | base64 --decode)
 echo "Grafana admin password: $ADMIN_PASSWORD"
@@ -40,8 +41,8 @@ echo "Grafana admin password: $ADMIN_PASSWORD"
 POD_NAME=$(kubectl get pods --namespace $NAMESPACE -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
 
 # Port-forward to access Grafana locally
-echo "Port-forwarding Grafana to http://localhost:3011"
-kubectl --namespace $NAMESPACE port-forward $POD_NAME 3011:3000 &
+echo "Port-forwarding Grafana to http://localhost:3000"
+kubectl --namespace $NAMESPACE port-forward $POD_NAME 3000:3000 &
 
 # Wait until port-forward is established
 sleep 10
@@ -50,9 +51,10 @@ sleep 10
 echo "Grafana is now accessible via NodePort on port 32000 of any cluster node."
 echo "Access Grafana at: http://<node-ip>:32000"
 echo "Login with username 'admin' and the password retrieved above."
+echo "    "
 
 # Create Grafana API Token
-GRAFANA_URL="http://localhost:3011"
+GRAFANA_URL="http://localhost:3000"
 
 # Current date and time as a unique identifier
 UNIQUE_ID=$(date +%s)
@@ -85,8 +87,9 @@ if [ "$FOLDER_UID" == "null" ]; then
     echo "Failed to create folder. Response was: $FOLDER_RESPONSE"
 else
     echo "Folder created with UID: $FOLDER_UID"
+    echo "Folder name: Grafana-${UNIQUE_ID}"
 fi
-
+echo "    "
 # Prometheus service URL
 PROMETHEUS_URL="http://prometheus-service.monitoring.svc.cluster.local:8080"
 
@@ -104,10 +107,8 @@ curl -X POST $GRAFANA_URL/api/datasources \
     "uid": "'"$PROMETHEUS_UID"'"
   }'
 echo "Prometheus datasource created successfully."
+echo "    "
 
-echo "prom_uid=============="
-echo $PROMETHEUS_UID
-echo "prom_uid=============="
 cp prometheus/json/grafana_dashboard.json prometheus/json/temp_grafana_dashboard.json
 cp prometheus/json/alert_rules.json prometheus/json/temp_alert_rules.json
 
@@ -126,24 +127,24 @@ sed -i "s/datasource_placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_al
 
 # Deploy the dashboard
 echo "Deploying dashboard..."
-curl -s -X POST $GRAFANA_URL/api/dashboards/db \
+curl  -X POST $GRAFANA_URL/api/dashboards/db \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/json/temp_grafana_dashboard.json
 echo "Dashboard deployed."
-
+echo "    "
 echo "Setting up contact point"
-response=$(curl -s -X POST "$GRAFANA_URL/api/v1/provisioning/contact-points" \
+response=$(curl -X POST "$GRAFANA_URL/api/v1/provisioning/contact-points" \
    -H "Content-Type: application/json" \
    -H "Authorization: Bearer $GRAFANA_TOKEN" \
    -H "X-Disable-Provenance: true" \
    -d "@prometheus/json/discord_alert.json")
-echo "$response"
+echo "Contact point set up"
 
-
+echo "    "
 # Deploy alert rules
 echo "Deploying alert rules..."
-curl -v -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
+curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/json/temp_alert_rules.json
