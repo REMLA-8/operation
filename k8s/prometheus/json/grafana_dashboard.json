@@ -2,7 +2,7 @@
   "dashboard": {
     "id": null,
     "uid": null,
-    "title": "Prediction App Metrics",
+    "title": "Prediction App Metrics-G8",
     "tags": [],
     "timezone": "browser",
     "schemaVersion": 16,
@@ -127,7 +127,7 @@
       },
       {
         "type": "stat",
-        "title": "Rate of Prediction requests [1 min]",
+        "title": "Increase of Prediction requests [1 min]",
         "gridPos": {
           "h": 8,
           "w": 12,
@@ -140,7 +140,7 @@
         },
         "targets": [
           {
-            "expr": "rate(prediction_requests_total[1m])",
+            "expr": "increase(prediction_requests_total[1m])",
             "refId": "A",
             "datasource": {
               "type": "prometheus",

@@ -4,7 +4,7 @@
   "folderUID": "folder_placeholder_uid",
   "noDataState": "OK",
   "execErrState": "OK",
-  "for": "5m",
+  "for": "1m",
   "orgId": 1,
   "uid": "",
   "condition": "B",
@@ -17,19 +17,29 @@
   "data": [
     {
       "refId": "A",
-      "queryType": "",
       "relativeTimeRange": {
         "from": 600,
         "to": 0
       },
       "datasourceUid": "datasource_placeholder_uid",
       "model": {
-        "expr": "rate(page_requests_created[1m])",
-        "hide": false,
+        "datasource": {
+            "type": "prometheus",
+            "uid": "datasource_placeholder_uid"
+        },
+        "disableTextWrap": false,
+        "editorMode": "builder",
+        "expr": "increase(page_requests_created[1m])",
+        "fullMetaSearch": false,
+        "includeNullMetadata": true,
+        "instant": true,
         "intervalMs": 1000,
+        "legendFormat": "__auto",
         "maxDataPoints": 43200,
-        "refId": "A"
-      }
+        "range": false,
+        "refId": "A",
+        "useBackend": false
+    }
     },
     {
       "refId": "B",
@@ -43,7 +53,7 @@
         "conditions": [
           {
             "evaluator": {
-              "params": [0.1],
+              "params": [10],
               "type": "gt"
             },
             "operator": {
@@ -63,7 +73,6 @@
           "type": "__expr__",
           "uid": "-100"
         },
-        "hide": false,
         "intervalMs": 1000,
         "maxDataPoints": 43200,
         "refId": "B",

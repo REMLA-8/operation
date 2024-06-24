@@ -1,5 +1,7 @@
 #!/bin/bash
+#Set Unique Identifiers
 
+PROMETHEUS_UID="prometheus-datasource-uid"
 # Set the namespace
 NAMESPACE="monitoring"
 
@@ -24,7 +26,7 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 3000
+    targetPort: 3011
     nodePort: 32000
   selector:
     app.kubernetes.io/name: grafana
@@ -38,8 +40,8 @@ echo "Grafana admin password: $ADMIN_PASSWORD"
 POD_NAME=$(kubectl get pods --namespace $NAMESPACE -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
 
 # Port-forward to access Grafana locally
-echo "Port-forwarding Grafana to http://localhost:3000"
-kubectl --namespace $NAMESPACE port-forward $POD_NAME 3000:3000 &
+echo "Port-forwarding Grafana to http://localhost:3011"
+kubectl --namespace $NAMESPACE port-forward $POD_NAME 3011:3000 &
 
 # Wait until port-forward is established
 sleep 10
@@ -50,7 +52,7 @@ echo "Access Grafana at: http://<node-ip>:32000"
 echo "Login with username 'admin' and the password retrieved above."
 
 # Create Grafana API Token
-GRAFANA_URL="http://localhost:3000"
+GRAFANA_URL="http://localhost:3011"
 
 # Current date and time as a unique identifier
 UNIQUE_ID=$(date +%s)
@@ -75,7 +77,7 @@ echo "Creating folder in Grafana..."
 FOLDER_RESPONSE=$(curl -s -X POST $GRAFANA_URL/api/folders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
-  -d '{"title": "Grafana_Rules"}')
+  -d '{"title": "AGrafana_r"}')
 
 FOLDER_UID=$(echo $FOLDER_RESPONSE | jq -r '.uid')
 
@@ -94,39 +96,33 @@ curl -X POST $GRAFANA_URL/api/datasources \
   -H "Content-Type: application/json" \
   -u admin:$ADMIN_PASSWORD \
   -d '{
-    "name": "Prometheus",
+    "name": "Prometheus_G8",
     "type": "prometheus",
     "url": "'"$PROMETHEUS_URL"'",
     "access": "proxy",
-    "isDefault": true
+    "isDefault": true,
+    "uid": "'"$PROMETHEUS_UID"'"
   }'
 echo "Prometheus datasource created successfully."
 
-echo "Fetch prometheus datasource uid"
-# Fetch datasource details
-response_prom=$(curl -s -H "Authorization: Bearer $GRAFANA_TOKEN" "$GRAFANA_URL/datasources")
-
-# Extract the UID of Prometheus datasource
-prometheus_uid=$(echo $response_prom | jq -r '.[] | select(.type=="prometheus" and .name=="Prometheus") | .uid')
-
-
-
-
+echo "prom_uid=============="
+echo $PROMETHEUS_UID
+echo "prom_uid=============="
 cp prometheus/json/grafana_dashboard.json prometheus/json/temp_grafana_dashboard.json
 cp prometheus/json/alert_rules.json prometheus/json/temp_alert_rules.json
 
 
 # Replace the placeholder UID in the JSON file
-sed -i "s/placeholder_uid/$prometheus_uid/g" "prometheus/json/temp_grafana_dashboard.json"
-# Update Prometheus datasource UID
-sed -i "s/datasource_placeholder_uid/$prometheus_uid/g" "prometheus/json/temp_alert_rules.json"
+sed -i "s/placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_grafana_dashboard.json"
+
 # Update Rule UID if necessary
 sed -i "s/rule_placeholder_uid/rule_uid/g" "prometheus/json/temp_alert_rules.json"
 # Use sed to replace the placeholder
 sed -i "s/folder_placeholder_uid/$FOLDER_UID/g" "prometheus/json/temp_alert_rules.json"
 # Update Notification UID
 # sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert_rules.json"
-
+# Update Prometheus datasource UID
+sed -i "s/datasource_placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_alert_rules.json"
 
 # Deploy the dashboard
 echo "Deploying dashboard..."
