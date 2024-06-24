@@ -70,5 +70,10 @@
         "type": "classic_conditions"
       }
     }
+  ],
+  "notifications": [
+    {
+      "uid": "unique-contact-point-uid-G8"
+    }
   ]
 }

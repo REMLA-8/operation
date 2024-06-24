@@ -75,7 +75,7 @@ echo "Creating folder in Grafana..."
 FOLDER_RESPONSE=$(curl -s -X POST $GRAFANA_URL/api/folders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
-  -d '{"title": "GrafanaRules"}')
+  -d '{"title": "Grafana_Rules"}')
 
 FOLDER_UID=$(echo $FOLDER_RESPONSE | jq -r '.uid')
 
