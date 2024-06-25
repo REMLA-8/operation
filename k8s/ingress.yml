@@ -1,0 +1,102 @@
+# This is the main gateway that provides external access to the cluster
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  selector:
+    istio: ingress
+  servers:
+  - port: { number: 80, name: http , protocol: HTTP }
+    hosts: [ "*" ]
+---
+# We can only route to a so-called "subset", so we have to say what that means. In this case those with the correct version label.
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: app-dr
+spec:
+  host: app-frontend-service
+  subsets:
+    - name: v2
+      labels: { version: v2 }
+    - name: canary
+      labels: { version: canary }
+---
+# This virtual service performs the random routing for the canary and standard release, based on a simple weight.
+# It sets a header equal to the version to allow the frontend to call the correct backend.
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-entry-service
+spec:
+  gateways: [ my-gateway ]
+  hosts: [ "*" ]
+  http:
+    - match:
+      - uri:
+          prefix: /
+      route:
+        - destination:
+            host: app-frontend-service
+            subset: v2
+          weight: 50
+          headers:
+            request:
+              set:
+                remla-deploy-version: v2
+        - destination:
+            host: app-frontend-service
+            subset: canary
+          weight: 50
+          headers:
+            request:
+              set:
+                remla-deploy-version: canary
+---
+# We need to also define subsets for the backend. Since we call using the browser we need to make the backend publicly accessible.
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: app-backend-dr
+spec:
+  host: app-backend-service
+  subsets:
+    - name: v2
+      labels: { version: v2 }
+    - name: canary
+      labels: { version: canary }
+---
+# Here we don't route randomly, but based on the headers in the request made by the frontend.
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: app-backend-vs
+spec:
+  gateways: [ my-gateway ]
+  hosts: [ "*" ]
+  http:
+    - match:
+      - uri:
+          prefix: /api
+        headers:
+          remla-deploy-version:
+            exact: v2
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: app-backend-service
+            subset: v2
+    - match:
+      - uri:
+          prefix: /api
+        headers:
+          remla-deploy-version:
+            exact: canary
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: app-backend-service
+            subset: canary

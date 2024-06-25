@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: app-backend
-        image: ghcr.io/remla24-team8/app-frontend:v0.2.0
+        image: ghcr.io/remla24-team8/app-frontend:v0.1.1
         ports:
         - containerPort: 80
         env:
@@ -81,7 +81,8 @@ spec:
     spec:
       containers:
       - name: app-backend
-        image: ghcr.io/remla24-team8/app-frontend:v0.1.1
+        image: ghcr.io/remla24-team8/app-frontend:header-forward
+        # image: ghcr.io/remla24-team8/app-frontend:v0.1.1
         ports:
         - containerPort: 80
         env:

@@ -1,6 +1,6 @@
-## Setup
+# Setup
 
-### Vagrant
+## Vagrant
 
 This setup assumes the host is running an Ubuntu-like system.
 
@@ -19,65 +19,80 @@ sudo apt install ./virtualbox.deb
 * 10.10.10.0/24 192.168.56.0/21
 ```
 
-4. Install ansible (`pipx install ansible`). If you don't have pipx, it's probably easiest to install it using `sudo apt install pipx` (see [here](https://pipx.pypa.io/stable/) for other instructions).
+4. Install ansible (`pipx install --include-deps ansible`). If you don't have pipx, it's probably easiest to install it using `sudo apt install pipx` (see [here](https://pipx.pypa.io/stable/) for other instructions). Note that you must ensure that the directory `pipx` installs in (`~/.local/bin` for most Unix-like systems), must be on your PATH.
 
 5. Ensure you are in the `operation/vagrant` directory.
 
-6. Run `vagrant up --provision`. This will install and run kubernetes (we use the k3s distribution, which makes it much easier to connect to from an external host, we disable most of its included add-ons to make it closer to a minikube installation) on the host and agent. This is not yet very secure, as it uses the `mytoken` as a hard-coded token. It relies on the main server node being 10.10.10.100.
+6. Run `vagrant up --provision`. This will install and run kubernetes (we use the k3s distribution, which makes it much easier to connect to from an external host, we disable most of its included add-ons to make it closer to a minikube installation) on the host and agent. This is not yet very secure, as it uses the `mytoken` as a hard-coded token. It relies on the main server node being 10.10.10.100. Note: we have had flaky performance for this step, although it seems more machine-specific (my laptop fails more often than my PC) and not related to the provisioning. Destroying the nodes and trying again should help.
 
 7. Run `./get_k8s_config.sh` to move the kubernetes config to the `k8s` folder in this repository (password is `vagrant`). If this worked, you can move the Kubernets part.
 
-### Kubernetes
+## Kubernetes
 
 1. Install kubectl on host machine: `https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/`
 
-2. Instal `helm`: `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash`
+2. Instal `helm`: `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash`. See [here for alternative installation instructions](https://helm.sh/docs/intro/install/).
 
-3. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` once per shell or you can pass `--kubeconfig k3s.yaml` each command.
+3. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` once per shell or you can pass `--kubeconfig k3s.yaml` each command. If everything is running, it should say something like:
 
-4. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB it's not practical to package this in a single chart. In the future we will look into `helmfile` or other options. You can also run the `./full_deploy.sh` file, which will run all of the below. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run.
-Run `kubectl get pods` to make sure all pods are running.
 ```
-export KUBECONFIG=k3s.yaml
+kubernetes             ClusterIP   10.43.0.1      <none>        443/TCP    3h27m
+```
 
-# Install MetalLB external load balancer
-helm upgrade --install metallb metallb \
-  --repo https://metallb.github.io/metallb \
-  --namespace metallb-system --create-namespace
+4. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB (it depends on specific namespaces being available) it's not practical to package this in a single chart (as this packages everything into one namespace). In the future we will look into `helmfile` or other options.
 
-# Make loadbalancer available
+Note: all the following sub-steps can be avoided by just running `./full_deploy.sh`. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run. We have tried to make everything wait before continuing, but this is not guaranteed to work. So be patient and run it a few times if necessary. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run. We have tried to make everything wait, but this is not guaranteed to work. So be patient and run it a few times if necessary.
+
+* Setup MetalLB and install Istio. This will setup all the necessary infrastructure for the deployment MetalLB allows Istio to properly give access to the cluster by handing it IP's from the range 10.10.10.0-10.10.10.99. In practice it will only use 10.10.10.0 as we need just one. This corresponds to `cluster/setup.sh`:
+
+```bash
+helm upgrade --install metallb metallb --repo https://metallb.github.io/metallb --namespace metallb-system --create-namespace --wait
 kubectl apply -f metal-pool.yml
 
-# Install nginx ingress controller
-helm upgrade --install ingress-nginx ingress-nginx \
-  --repo https://kubernetes.github.io/ingress-nginx \
-  --namespace ingress-nginx --create-namespace
-
-# Install dashboard
-helm upgrade --install kubernetes-dashboard kubernetes-dashboard \
-    --repo https://kubernetes.github.io/dashboard \
-    --namespace kubernetes-dashboard --create-namespace
-
-# Make dashboard available
-kubectl apply -f dashboard.yml
-
-# Deploy application (might take up to a minute before it's fully ready)
-kubectl apply -f deployment.yml
+helm upgrade --install istio-base base --repo https://istio-release.storage.googleapis.com/charts --namespace istio-system --create-namespace
+helm upgrade --install istiod istiod --repo https://istio-release.storage.googleapis.com/charts --namespace istio-system --create-namespace --wait
+helm upgrade --install istio-ingress gateway --repo https://istio-release.storage.googleapis.com/charts --namespace istio-ingress --create-namespace --wait
 ```
 
-4. If you want to access the dashboard, go to https://10.10.10.0/dash (it's important you use HTTPS, be sure to also accept the warning)
+* The pods and services for the application can now be turned on with:
 
-Create a service account to access it:
+```bash
+# All the kubernetes Service/Deployment definitions
+kubectl apply -f application.yml
+# The Istio Gateway, VirtualService, DestinationRule and other routing stuff 
+kubectl apply -f ingress.yml
 ```
-kubectl create serviceaccount jenkins
-kubectl create token jenkins
-# do below to grant full admin permissions specifically to service account 'jenkins'
-kubectl apply -f cluster-role.yml
+
+5. The app can be accessed at http://10.10.10.0.
+
+### Dashboard
+
+The Kubernetes Dashboard is designed with HTTPS in mind. However, as we are all running our cluster locally, this clashes with the design of the dashboard. We got it working before the move to Istio, as can be seen after [this PR](https://github.com/remla24-team8/operation/pull/8). However, since there is already the Kiali Dashboard, we decided not to include the Kubernetes Dashboard in the final product. The setup without Istio can be found in `k8s/old`.
+
+### Prometheus
+
+When needing port forwarding write the following line in the terminal to expose the prometheus service.
+
 ```
+kubectl port-forward -n monitoring svc/prometheus-service 8080:8080
+```
+In order to launch grafana open a new terminal run `export KUBECONFIG=k3s.yaml`. 
+Then check if the kubectl is reachable with `kubectl get nodes`.
 
-Then you can paste the resulting token into the web browser.
+Make sure jq is installed on a linux system. `sudo apt-get install jq`.
 
-5. The app can be accessed at http://10.10.10.0. The backend is available at http://10.10.10.0/api.
+
+By running the following command the grafana interface will be launched, please make sure localhost:3000 is free first or change the portforwarding in the grafana deploy file. If no contact can be made the grafana API token will stay empty and the script will return an error. To solve make sure localhost:3000 is free or change the port in the grafan deploy script.
+```
+./prometheus/grafana_deploy.sh 
+```
+Then make your way to http://localhost:3000/ to find grafana, username:admin and password is returned by the grafana_deploy script.
+
+The Alert rules will fire in a discord channel. 
+
+### Kiali Dashboard
+
+## Notes
 
 ### Vagrant networking addendum
 
@@ -103,21 +118,3 @@ This is useful because it does not require setting up port forwarding for every 
 
 
 6. 
-When needing port forwarding write the following line in the terminal to expose the prometheus service.
-
-```
-kubectl port-forward -n monitoring svc/prometheus-service 8080:8080
-```
-In order to launch grafana open a new terminal run `export KUBECONFIG=k3s.yaml`. 
-Then check if the kubectl is reachable with `kubectl get nodes`.
-
-Make sure jq is installed on a linux system. `sudo apt-get install jq`.
-
-
-By running the following command the grafana interface will be launched, please make sure localhost:3000 is free first or change the portforwarding in the grafana deploy file. If no contact can be made the grafana API token will stay empty and the script will return an error. To solve make sure localhost:3000 is free or change the port in the grafan deploy script.
-```
-./prometheus/grafana_deploy.sh 
-```
-Then make your way to http://localhost:3000/ to find grafana, username:admin and password is returned by the grafana_deploy script.
-
-The Alert rules will fire in a discord channel. 
