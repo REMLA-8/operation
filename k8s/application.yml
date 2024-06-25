@@ -81,7 +81,8 @@ spec:
     spec:
       containers:
       - name: app-frontend
-        image: ghcr.io/remla24-team8/app-frontend:main
+        image: ghcr.io/remla24-team8/app-frontend:canary
+        # always pull newer versions
         imagePullPolicy: Always
         ports:
         - containerPort: 80

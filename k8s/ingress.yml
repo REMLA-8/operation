@@ -35,6 +35,7 @@ spec:
   http:
     - match:
       - uri:
+          # these need to match the tag of the actual deployed image
           prefix: /frontend/v0.2.4
       rewrite:
         uri: /
@@ -48,7 +49,8 @@ spec:
                 remla-deploy-version: v2
     - match:
       - uri:
-          prefix: /frontend/main
+          # these need to match the tag of the actual deployed image
+          prefix: /frontend/canary
       rewrite:
         uri: /
       route:
