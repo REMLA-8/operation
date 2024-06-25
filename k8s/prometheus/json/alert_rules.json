@@ -32,7 +32,7 @@
         },
         "disableTextWrap": false,
         "editorMode": "builder",
-        "expr": "increase(page_requests_created[1m])",
+        "expr": "increase(prediction_requests_total[1m])",
         "fullMetaSearch": false,
         "includeNullMetadata": true,
         "instant": true,
