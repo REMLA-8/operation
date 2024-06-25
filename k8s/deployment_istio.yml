@@ -1,10 +1,66 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: nginx
+  name: app-frontend
+  labels:
+    app: app-frontend
+    version: v2
 spec:
-  containers:
-  - name: nginx
-    image: nginx:1.14.2
-    ports:
-    - containerPort: 80
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-frontend
+  template:
+    metadata:
+      labels:
+        app: app-frontend
+        version: v2
+    spec:
+      containers:
+      - name: app-backend
+        image: ghcr.io/remla24-team8/app-frontend:v0.2.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: BACKEND_URL
+          value: 'http://10.10.10.0/api'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-frontend-experimental
+  labels:
+    app: app-frontend
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-frontend
+  template:
+    metadata:
+      labels:
+        app: app-frontend
+        version: v1
+    spec:
+      containers:
+      - name: app-backend
+        image: ghcr.io/remla24-team8/app-frontend:v0.1.1
+        ports:
+        - containerPort: 80
+        env:
+        - name: BACKEND_URL
+          value: 'http://10.10.10.0/api'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-frontend-service
+spec:
+  selector:
+    app: app-frontend
+  ports:
+  - name: http
+    port: 3001
+    targetPort: 80
+---
