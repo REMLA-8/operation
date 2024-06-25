@@ -107,7 +107,7 @@
         },
         "targets": [
           {
-            "expr": "page_requests_total",
+            "expr": "scam_predictions_total",
             "refId": "A",
             "datasource": {
               "type": "prometheus",
