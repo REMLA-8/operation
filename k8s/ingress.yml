@@ -23,65 +23,6 @@ spec:
     - name: canary
       labels: { version: canary }
 ---
-# This virtual service performs the random routing for the canary and standard release, based on a simple weight.
-# It sets a header equal to the version to allow the frontend to call the correct backend.
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: my-entry-service
-spec:
-  gateways: [ my-gateway ]
-  hosts: [ "*" ]
-  http:
-    - match:
-      - uri:
-          # these need to match the tag of the actual deployed image
-          prefix: /frontend/v0.2.4
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: app-frontend-service
-            subset: v2
-          headers:
-            request:
-              set:
-                remla-deploy-version: v2
-    - match:
-      - uri:
-          # these need to match the tag of the actual deployed image
-          prefix: /frontend/canary
-      rewrite:
-        uri: /
-      route:
-        - destination:
-            host: app-frontend-service
-            subset: canary
-          headers:
-            request:
-              set:
-                remla-deploy-version: canary
-    - match:
-      - uri:
-          prefix: /
-      route:
-        - destination:
-            host: app-frontend-service
-            subset: v2
-          weight: 70
-          headers:
-            request:
-              set:
-                remla-deploy-version: v2
-        - destination:
-            host: app-frontend-service
-            subset: canary
-          weight: 30
-          headers:
-            request:
-              set:
-                remla-deploy-version: canary
----
 # We need to also define subsets for the backend. Since we call using the browser we need to make the backend publicly accessible.
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
@@ -95,15 +36,44 @@ spec:
     - name: canary
       labels: { version: canary }
 ---
-# Here we don't route randomly, but based on the headers in the request made by the frontend.
+# This virtual service performs the random routing for the canary and standard release, based on a simple weight.
+# It sets a header equal to the version to allow the frontend to call the correct backend.
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: app-backend-vs
+  name: my-entry-service
 spec:
   gateways: [ my-gateway ]
   hosts: [ "*" ]
   http:
+    - match:
+      - uri:
+          # these need to match the 'DEPLOY_NAME' of the actual frontend image
+          prefix: /frontend/v0.2.4
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: app-frontend-service
+            subset: v2
+          headers:
+            request:
+              set:
+                remla-deploy-version: v2
+    - match:
+      - uri:
+          # these need to match the 'DEPLOY_NAME' of the actual frontend image
+          prefix: /frontend/canary
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: app-frontend-service
+            subset: canary
+          headers:
+            request:
+              set:
+                remla-deploy-version: canary
     - match:
       - uri:
           prefix: /api
@@ -128,3 +98,24 @@ spec:
         - destination:
             host: app-backend-service
             subset: canary
+    - match:
+      - uri:
+          prefix: /
+      route:
+        - destination:
+            host: app-frontend-service
+            subset: v2
+          weight: 70
+          headers:
+            request:
+              set:
+                remla-deploy-version: v2
+        - destination:
+            host: app-frontend-service
+            subset: canary
+          weight: 30
+          headers:
+            request:
+              set:
+                remla-deploy-version: canary
+---
