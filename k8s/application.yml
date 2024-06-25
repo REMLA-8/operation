@@ -52,8 +52,8 @@ spec:
         version: v2
     spec:
       containers:
-      - name: app-backend
-        image: ghcr.io/remla24-team8/app-frontend:v0.1.1
+      - name: app-frontend
+        image: ghcr.io/remla24-team8/app-frontend:v0.2.4
         ports:
         - containerPort: 80
         env:
@@ -80,9 +80,9 @@ spec:
         version: canary
     spec:
       containers:
-      - name: app-backend
-        image: ghcr.io/remla24-team8/app-frontend:header-forward
-        # image: ghcr.io/remla24-team8/app-frontend:v0.1.1
+      - name: app-frontend
+        image: ghcr.io/remla24-team8/app-frontend:main
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:

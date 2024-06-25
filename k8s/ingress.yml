@@ -35,12 +35,38 @@ spec:
   http:
     - match:
       - uri:
+          prefix: /frontend/v0.2.4
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: app-frontend-service
+            subset: v2
+          headers:
+            request:
+              set:
+                remla-deploy-version: v2
+    - match:
+      - uri:
+          prefix: /frontend/main
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: app-frontend-service
+            subset: canary
+          headers:
+            request:
+              set:
+                remla-deploy-version: canary
+    - match:
+      - uri:
           prefix: /
       route:
         - destination:
             host: app-frontend-service
             subset: v2
-          weight: 50
+          weight: 70
           headers:
             request:
               set:
@@ -48,7 +74,7 @@ spec:
         - destination:
             host: app-frontend-service
             subset: canary
-          weight: 50
+          weight: 30
           headers:
             request:
               set:
