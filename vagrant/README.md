@@ -36,7 +36,7 @@ sudo apt install ./virtualbox.deb
 3. It's recommended to move to the `k8s` folder in the repository and check if everything is running with `kubectl get services` (or similar). You can either set `export KUBECONFIG=k3s.yaml` once per shell or you can pass `--kubeconfig k3s.yaml` each command.
 
 4. Now, a bunch of prerequisite helm charts must be installed. Due to the design of MetalLB it's not practical to package this in a single chart. In the future we will look into `helmfile` or other options. You can also run the `./full_deploy.sh` file, which will run all of the below. It might not succeed the first time as some earlier services might not be ready. Wait a bit and re-run.
-
+Run `kubectl get pods` to make sure all pods are running.
 ```
 export KUBECONFIG=k3s.yaml
 
@@ -114,7 +114,7 @@ Then check if the kubectl is reachable with `kubectl get nodes`.
 Make sure jq is installed on a linux system. `sudo apt-get install jq`.
 
 
-By running the following command the grafana interface will be launched
+By running the following command the grafana interface will be launched, please make sure localhost:3000 is free first or change the portforwarding in the grafana deploy file.
 ```
 ./prometheus/grafana_deploy.sh 
 ```
