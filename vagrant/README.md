@@ -114,7 +114,7 @@ Then check if the kubectl is reachable with `kubectl get nodes`.
 Make sure jq is installed on a linux system. `sudo apt-get install jq`.
 
 
-By running the following command the grafana interface will be launched, please make sure localhost:3000 is free first or change the portforwarding in the grafana deploy file.
+By running the following command the grafana interface will be launched, please make sure localhost:3000 is free first or change the portforwarding in the grafana deploy file. If no contact can be made the grafana API token will stay empty and the script will return an error. To solve make sure localhost:3000 is free or change the port in the grafan deploy script.
 ```
 ./prometheus/grafana_deploy.sh 
 ```

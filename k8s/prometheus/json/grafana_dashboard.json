@@ -377,7 +377,7 @@
         },
         "targets": [
           {
-            "expr": "rate(page_requests_created[$__rate_interval])",
+            "expr": "rate(page_requests_total[$__rate_interval])",
             "refId": "A",
             "datasource": {
               "type": "prometheus",
