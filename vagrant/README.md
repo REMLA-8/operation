@@ -19,6 +19,8 @@ sudo apt install ./virtualbox.deb
 * 10.10.10.0/24 192.168.56.0/21
 ```
 
+NOTE: If this ip address range is not available on your local network because it is used by something else, this must be changed! This also requires changing the `k8s/cluster/metal-pool.yml` and means the app will be available at a different endpoint.
+
 4. Install ansible (`pipx install --include-deps ansible`). If you don't have pipx, it's probably easiest to install it using `sudo apt install pipx` (see [here](https://pipx.pypa.io/stable/) for other instructions). Note that you must ensure that the directory `pipx` installs in (`~/.local/bin` for most Unix-like systems), must be on your PATH.
 
 5. Ensure you are in the `operation/vagrant` directory.
