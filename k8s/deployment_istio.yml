@@ -1,6 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: model-service-deploy
+  labels:
+    app: model-service-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-service-deploy
+  template:
+    metadata:
+      labels:
+        app: model-service-deploy
+    spec:
+      containers:
+      - name: model-service
+        image: ghcr.io/remla24-team8/model-service:v0.1.1
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-service
+spec:
+  selector:
+    app: model-service-deploy
+  ports:
+  - name: http
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: app-frontend
   labels:
     app: app-frontend
@@ -10,6 +44,7 @@ spec:
   selector:
     matchLabels:
       app: app-frontend
+      version: v2
   template:
     metadata:
       labels:
@@ -31,17 +66,18 @@ metadata:
   name: app-frontend-experimental
   labels:
     app: app-frontend
-    version: v1
+    version: canary
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: app-frontend
+      version: canary
   template:
     metadata:
       labels:
         app: app-frontend
-        version: v1
+        version: canary
     spec:
       containers:
       - name: app-backend
@@ -64,3 +100,70 @@ spec:
     port: 3001
     targetPort: 80
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-backend
+  labels:
+    app: app-backend
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-backend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: app-backend
+        version: v2
+    spec:
+      containers:
+      - name: app-backend
+        image: ghcr.io/remla24-team8/app-backend:v0.2.2
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MODEL_SERVICE_URL
+          value: http://model-service:5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-backend-experimental
+  labels:
+    app: app-backend
+    version: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-backend
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: app-backend
+        version: canary
+    spec:
+      containers:
+      - name: app-backend
+        image: ghcr.io/remla24-team8/app-backend:v0.2.2
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MODEL_SERVICE_URL
+          value: http://model-service:5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-backend-service
+spec:
+  selector:
+    app: app-backend
+  ports:
+  - name: http
+    port: 5000
+    targetPort: 5000
