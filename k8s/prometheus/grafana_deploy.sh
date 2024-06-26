@@ -92,7 +92,7 @@ else
 fi
 echo "    "
 # Prometheus service URL
-PROMETHEUS_URL="http://prometheus-service.monitoring.svc.cluster.local:8080"
+PROMETHEUS_URL="http://10.10.10.0/prometheus"
 
 # Create Prometheus datasource using Grafana API
 echo "Creating Prometheus datasource in Grafana..."
