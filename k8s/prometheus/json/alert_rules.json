@@ -1,12 +1,12 @@
 {
-  "title": "Request_Rate",
+  "title": "Request_Rate_v2",
   "ruleGroup": "API",
   "folderUID": "folder_placeholder_uid",
   "noDataState": "OK",
   "execErrState": "OK",
   "for": "1m",
   "orgId": 1,
-  "uid": "",
+  "uid": "Rule_v2",
   "condition": "B",
   "annotations": {
     "summary": "Number of Requests has exceeded the set threshold in v2 deployment."

@@ -112,19 +112,22 @@ echo "    "
 
 cp prometheus/json/grafana_dashboard.json prometheus/json/temp_grafana_dashboard.json
 cp prometheus/json/alert_rules.json prometheus/json/temp_alert_rules.json
+cp prometheus/json/alert_rules_canary.json prometheus/json/temp_alert_rules_canary.json
 
 
 # Replace the placeholder UID in the JSON file
 sed -i "s/placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_grafana_dashboard.json"
 
-# Update Rule UID if necessary
-sed -i "s/rule_placeholder_uid/rule_uid/g" "prometheus/json/temp_alert_rules.json"
 # Use sed to replace the placeholder
 sed -i "s/folder_placeholder_uid/$FOLDER_UID/g" "prometheus/json/temp_alert_rules.json"
-# Update Notification UID
-# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert_rules.json"
 # Update Prometheus datasource UID
 sed -i "s/datasource_placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_alert_rules.json"
+
+# Use sed to replace the placeholder
+sed -i "s/folder_placeholder_uid/$FOLDER_UID/g" "prometheus/json/temp_alert_rules_canary.json"
+# Update Prometheus datasource UID
+sed -i "s/datasource_placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_alert_rules_canary.json"
+
 
 # Deploy the dashboard
 echo "Deploying dashboard..."
@@ -151,6 +154,14 @@ curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -d @prometheus/json/temp_alert_rules.json
 echo "Alert rules deployed."
 
+echo "Deploying alert rules..."
+curl -v -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $GRAFANA_TOKEN" \
+  -d @prometheus/json/temp_alert_rules_canary.json
+echo "Alert rules deployed."
+
 # Remove the temporary file after use
 rm prometheus/json/temp_grafana_dashboard.json
 rm prometheus/json/temp_alert_rules.json
+rm prometheus/json/temp_alert_rules_canary.json
