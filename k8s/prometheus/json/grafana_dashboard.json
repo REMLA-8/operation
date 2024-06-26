@@ -50,13 +50,25 @@
         },
         "targets": [
           {
-            "expr": "scam_percentage",
+            "expr": "scam_percentage{version='v2'}",
+            "legendFormat": "v2",
             "refId": "A",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
             }
+          },
+
+          {  
+          "expr": "scam_percentage{version='canary'}",
+          "legendFormat": "Canary",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "placeholder_uid"
           }
+        }
+
         ],
         "options": {
           "showLines": true,
@@ -83,13 +95,24 @@
         },
         "targets": [
           {
-            "expr": "scam_percentage",
+            "expr": "scam_percentage{version='v2'}",
+            "legendFormat": "v2",
             "refId": "A",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
             }
+          }, 
+          {
+          "expr": "scam_percentage{version='canary'}",
+          "legendFormat": "Canary",
+            "refId": "B",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
           }
+
         ]
       },
       {
@@ -107,8 +130,18 @@
         },
         "targets": [
           {
-            "expr": "scam_predictions_total",
+            "expr": "scam_predictions_total{version='v2'}",
+            "legendFormat": "v2",
             "refId": "A",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          },
+          {
+            "expr": "scam_predictions_total{version='canary'}",
+            "legendFormat": "Canary",
+            "refId": "B",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
@@ -140,8 +173,17 @@
         },
         "targets": [
           {
-            "expr": "increase(prediction_requests_total[1m])",
+            "expr": "increase(prediction_requests_total{version='v2'}[1m])",
+            "legendFormat": "v2",
             "refId": "A",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          },
+          {
+            "expr": "increase(prediction_requests_total{version='canary'}[1m])",
+            "refId": "B",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
@@ -173,7 +215,8 @@
         },
         "targets": [
           {
-            "expr": "histogram_quantile(0.9, rate(prediction_latency_seconds_bucket[5m]))",
+            "expr": "histogram_quantile(0.95, rate(prediction_latency_seconds_bucket{version='v2'}[1h]))",
+            "legendFormat": "v2",
             "refId": "A",
             "datasource": {
               "type": "prometheus",
@@ -181,7 +224,8 @@
             }
           },
           {
-            "expr": "histogram_quantile(0.95, rate(prediction_latency_seconds_bucket[5m]))",
+            "expr": "histogram_quantile(0.99, rate(prediction_latency_seconds_bucket{version='v2'}[1h]))",
+            "legendFormat": "v2",
             "refId": "B",
             "datasource": {
               "type": "prometheus",
@@ -189,117 +233,18 @@
             }
           },
           {
-            "expr": "histogram_quantile(0.99, rate(prediction_latency_seconds_bucket[5m]))",
+            "expr": "histogram_quantile(0.95, rate(prediction_latency_seconds_bucket{version='canary'}[1h]))",
+            "legendFormat": "Canary",
             "refId": "C",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
             }
-          }
-        ],
-        "options": {
-          "showLines": true,
-          "showPoints": "always"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisBorderShow": false,
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
           },
-          "overrides": [
-            {
-              "__systemRef": "hideSeriesFrom",
-              "matcher": {
-                "id": "byNames",
-                "options": {
-                  "mode": "exclude",
-                  "names": [
-                    "{instance=\"app-backend-service.default.svc.cluster.local:5000\", job=\"app-backend\"}"
-                  ],
-                  "prefix": "All except:",
-                  "readOnly": true
-                }
-              },
-              "properties": [
-                {
-                  "id": "custom.hideFrom",
-                  "value": {
-                    "legend": false,
-                    "tooltip": false,
-                    "viz": true
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      },
-      
-
-      {
-        "type": "histogram",
-        "title": "Prediction Latency Histogram",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 12,
-          "y": 17
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "placeholder_uid"
-        },
-        "targets": [
           {
-            "expr": "prediction_latency_seconds_count",
-            "refId": "A",
+            "expr": "histogram_quantile(0.99, rate(prediction_latency_seconds_bucket{version='canary'}[1h]))",
+            "legendFormat": "Canary",
+            "refId": "D",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
@@ -309,94 +254,6 @@
         "options": {
           "showLines": true,
           "showPoints": "always"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "unit": "short"
-          }
-        }
-      },
-      {
-        "type": "row",
-        "title": "Application Health",
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 25
-        },
-        "panels": []
-      },
-      {
-        "type": "timeseries",
-        "title": "CPU  Process [current interval]",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 0,
-          "y": 26
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "placeholder_uid"
-        },
-        "targets": [
-          {
-            "expr": "rate(process_cpu_seconds_total[$__rate_interval])",
-            "refId": "A",
-            "datasource": {
-              "type": "prometheus",
-              "uid": "placeholder_uid"
-            }
-          }
-        ],
-        "options": {
-          "showLines": true,
-          "showPoints": "always"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "unit": "short"
-          }
-        }
-      },
-
-
-      {
-        "type": "timeseries",
-        "title": "Page Requests rate [current interval]",
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 12,
-          "y": 26
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "placeholder_uid"
-        },
-        "targets": [
-          {
-            "expr": "rate(page_requests_total[$__rate_interval])",
-            "refId": "A",
-            "datasource": {
-              "type": "prometheus",
-              "uid": "placeholder_uid"
-            }
-          }
-        ],
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "maxHeight": 600,
-            "mode": "single",
-            "sort": "none"
-          }
         },
         "fieldConfig": {
           "defaults": {
@@ -455,16 +312,14 @@
       },
       
 
-
-
       {
-        "type": "timeseries",
-        "title": "Allocated memory",
+        "type": "histogram",
+        "title": "Prediction Latency Histogram",
         "gridPos": {
           "h": 8,
           "w": 12,
-          "x": 0,
-          "y": 34
+          "x": 12,
+          "y": 17
         },
         "datasource": {
           "type": "prometheus",
@@ -472,8 +327,117 @@
         },
         "targets": [
           {
-            "expr": "go_memstats_alloc_bytes",
+            "expr": "prediction_latency_seconds_count{version='v2'}",
+            "legendFormat": "v2",
             "refId": "A",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          },
+          {
+            "expr": "prediction_latency_seconds_count{version='canary'}",
+            "legendFormat": "Canary",
+            "refId": "B",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          }
+        ],
+        "options": {
+          "showLines": true,
+          "showPoints": "always"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "type": "row",
+        "title": "Application Health",
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 25
+        },
+        "panels": []
+      },
+      {
+        "type": "timeseries",
+        "title": "CPU  Process [current interval]",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 26
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "placeholder_uid"
+        },
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total{version='v2'}[$__rate_interval])",
+            "legendFormat": "v2",
+            "refId": "A",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          },
+          {
+            "expr": "rate(process_cpu_seconds_total{version='canary'}[$__rate_interval])",
+            "legendFormat": "Canary",
+            "refId": "B",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          }
+        ],
+        "options": {
+          "showLines": true,
+          "showPoints": "always"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+
+
+      {
+        "type": "timeseries",
+        "title": "Page Requests rate [current interval]",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 26
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "placeholder_uid"
+        },
+        "targets": [
+          {
+            "expr": "rate(page_requests_total{version='v2'}[$__rate_interval])",
+            "legendFormat": "v2",
+            "refId": "A",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "placeholder_uid"
+            }
+          },
+          {
+            "expr": "rate(page_requests_total{version='canary'}[$__rate_interval])",
+            "legendFormat": "Canary",
+            "refId": "B",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
