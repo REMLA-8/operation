@@ -1,7 +1,7 @@
 NODE_ROLES = ["server-0", "agent-0", "agent-1"]
 
 NODE_CPUS = 2
-NODE_MEMORY = 2048
+NODE_MEMORY = 4096
 # Virtualbox >= 6.1.28 require `/etc/vbox/network.conf` for expanded private networks 
 NETWORK_PREFIX = "10.10.10"
 
@@ -17,6 +17,11 @@ def provision(vm, role, node_num)
   node_ip = "#{NETWORK_PREFIX}.#{node_num+100}"
   # An expanded netmask is required to allow VM<-->VM communication, virtualbox defaults to /32
   vm.network "private_network", ip: node_ip, netmask: "255.255.255.0"
+
+  vm.provider "virtualbox" do |v|
+    v.memory = NODE_MEMORY
+    v.cpus = NODE_CPUS
+  end
 
   vm.provision "ansible", run: 'once' do |ansible|
     ansible.compatibility_mode = "2.0"
