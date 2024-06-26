@@ -19,6 +19,8 @@ def test_service(service_client: Client):
 
 def test_service_two(service_client: Client):
     r = service_client.post("/predict", json={'url': ['tudelft.nl', 'google.com']})
+    j = r.json()
+    assert all(map(lambda s: s < 0.5, j['score']))
     assert r.status_code == 200
     result_json = r.json()
     assert 'score' in result_json
