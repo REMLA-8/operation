@@ -1,9 +1,10 @@
 #!/bin/bash
 #Set Unique Identifiers
-
+TARGETPORT=3000
 PROMETHEUS_UID="prometheus-datasource-uid"
 # Set the namespace
 NAMESPACE="monitoring"
+
 
 # Create the namespace if it doesn't exist
 kubectl create namespace $NAMESPACE || true
@@ -26,7 +27,7 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 3000
+    targetPort: $TARGETPORT
     nodePort: 32000
   selector:
     app.kubernetes.io/name: grafana
@@ -41,8 +42,8 @@ echo "Grafana admin password: $ADMIN_PASSWORD"
 POD_NAME=$(kubectl get pods --namespace $NAMESPACE -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
 
 # Port-forward to access Grafana locally
-echo "Port-forwarding Grafana to http://localhost:3000"
-kubectl --namespace $NAMESPACE port-forward $POD_NAME 3000:3000 &
+echo "Port-forwarding Grafana to http://localhost:$TARGETPORT"
+kubectl --namespace $NAMESPACE port-forward $POD_NAME $TARGETPORT:3000 &
 
 # Wait until port-forward is established
 sleep 10
@@ -54,7 +55,7 @@ echo "Login with username 'admin' and the password retrieved above."
 echo "    "
 
 # Create Grafana API Token
-GRAFANA_URL="http://localhost:3000"
+GRAFANA_URL="http://localhost:$TARGETPORT"
 
 # Current date and time as a unique identifier
 UNIQUE_ID=$(date +%s)
