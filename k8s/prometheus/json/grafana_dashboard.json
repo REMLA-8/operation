@@ -82,7 +82,7 @@
       },
       {
         "type": "gauge",
-        "title": "Scam Percentage (Now)",
+        "title": "Scam percentage (Now)",
         "gridPos": {
           "h": 8,
           "w": 12,
@@ -117,7 +117,7 @@
       },
       {
         "type": "timeseries",
-        "title": "Total Prediction Request",
+        "title": "Total amount of prediction requests",
         "gridPos": {
           "h": 8,
           "w": 12,
@@ -160,7 +160,7 @@
       },
       {
         "type": "stat",
-        "title": "Increase of Prediction requests [1 min]",
+        "title": "Increase of total prediction requests [1 min]",
         "gridPos": {
           "h": 8,
           "w": 12,
@@ -184,6 +184,7 @@
           {
             "expr": "increase(prediction_requests_total{version='canary'}[1m])",
             "refId": "B",
+            "legendFormat": "Canary",
             "datasource": {
               "type": "prometheus",
               "uid": "placeholder_uid"
@@ -202,7 +203,7 @@
       },
       {
         "type": "timeseries",
-        "title": "Prediction latency by quantile (0.9, 0.95, 0.99)",
+        "title": "Prediction latency by quantile (0.95, 0.99) in seconds",
         "gridPos": {
           "h": 8,
           "w": 12,
@@ -216,7 +217,7 @@
         "targets": [
           {
             "expr": "histogram_quantile(0.95, rate(prediction_latency_seconds_bucket{version='v2'}[1h]))",
-            "legendFormat": "v2",
+            "legendFormat": "v2-0.95",
             "refId": "A",
             "datasource": {
               "type": "prometheus",
@@ -225,7 +226,7 @@
           },
           {
             "expr": "histogram_quantile(0.99, rate(prediction_latency_seconds_bucket{version='v2'}[1h]))",
-            "legendFormat": "v2",
+            "legendFormat": "v2-0.99",
             "refId": "B",
             "datasource": {
               "type": "prometheus",
@@ -234,7 +235,7 @@
           },
           {
             "expr": "histogram_quantile(0.95, rate(prediction_latency_seconds_bucket{version='canary'}[1h]))",
-            "legendFormat": "Canary",
+            "legendFormat": "Canary-0.95",
             "refId": "C",
             "datasource": {
               "type": "prometheus",
@@ -243,7 +244,7 @@
           },
           {
             "expr": "histogram_quantile(0.99, rate(prediction_latency_seconds_bucket{version='canary'}[1h]))",
-            "legendFormat": "Canary",
+            "legendFormat": "Canary-0.99",
             "refId": "D",
             "datasource": {
               "type": "prometheus",
@@ -314,7 +315,7 @@
 
       {
         "type": "histogram",
-        "title": "Prediction Latency Histogram",
+        "title": "Prediction latency histogram",
         "gridPos": {
           "h": 8,
           "w": 12,

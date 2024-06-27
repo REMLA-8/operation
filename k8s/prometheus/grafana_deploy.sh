@@ -1,7 +1,7 @@
 #!/bin/bash
 #Set Unique Identifiers
 TARGETPORT=3000
-PROMETHEUS_UID="prometheus-datasource-uid"
+PROMETHEUS_UID="prometheus-datasource-uid3"
 # Set the namespace
 NAMESPACE="monitoring"
 
@@ -155,7 +155,7 @@ curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
 echo "Alert rules deployed."
 
 echo "Deploying alert rules..."
-curl -v -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
+curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/json/temp_alert_rules_canary.json
