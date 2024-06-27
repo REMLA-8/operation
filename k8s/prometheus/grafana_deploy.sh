@@ -1,9 +1,10 @@
 #!/bin/bash
 #Set Unique Identifiers
-
-PROMETHEUS_UID="prometheus-datasource-uid"
+TARGETPORT=3000
+PROMETHEUS_UID="prometheus-datasource-uid3"
 # Set the namespace
 NAMESPACE="monitoring"
+
 
 # Create the namespace if it doesn't exist
 kubectl create namespace $NAMESPACE || true
@@ -26,7 +27,7 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 3000
+    targetPort: $TARGETPORT
     nodePort: 32000
   selector:
     app.kubernetes.io/name: grafana
@@ -41,8 +42,8 @@ echo "Grafana admin password: $ADMIN_PASSWORD"
 POD_NAME=$(kubectl get pods --namespace $NAMESPACE -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
 
 # Port-forward to access Grafana locally
-echo "Port-forwarding Grafana to http://localhost:3000"
-kubectl --namespace $NAMESPACE port-forward $POD_NAME 3000:3000 &
+echo "Port-forwarding Grafana to http://localhost:$TARGETPORT"
+kubectl --namespace $NAMESPACE port-forward $POD_NAME $TARGETPORT:3000 &
 
 # Wait until port-forward is established
 sleep 10
@@ -54,7 +55,7 @@ echo "Login with username 'admin' and the password retrieved above."
 echo "    "
 
 # Create Grafana API Token
-GRAFANA_URL="http://localhost:3000"
+GRAFANA_URL="http://localhost:$TARGETPORT"
 
 # Current date and time as a unique identifier
 UNIQUE_ID=$(date +%s)
@@ -91,7 +92,7 @@ else
 fi
 echo "    "
 # Prometheus service URL
-PROMETHEUS_URL="http://prometheus-service.monitoring.svc.cluster.local:8080"
+PROMETHEUS_URL="http://10.10.10.0/prometheus"
 
 # Create Prometheus datasource using Grafana API
 echo "Creating Prometheus datasource in Grafana..."
@@ -111,19 +112,22 @@ echo "    "
 
 cp prometheus/json/grafana_dashboard.json prometheus/json/temp_grafana_dashboard.json
 cp prometheus/json/alert_rules.json prometheus/json/temp_alert_rules.json
+cp prometheus/json/alert_rules_canary.json prometheus/json/temp_alert_rules_canary.json
 
 
 # Replace the placeholder UID in the JSON file
 sed -i "s/placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_grafana_dashboard.json"
 
-# Update Rule UID if necessary
-sed -i "s/rule_placeholder_uid/rule_uid/g" "prometheus/json/temp_alert_rules.json"
 # Use sed to replace the placeholder
 sed -i "s/folder_placeholder_uid/$FOLDER_UID/g" "prometheus/json/temp_alert_rules.json"
-# Update Notification UID
-# sed -i "s/unique-contact-point-uid-G8/$notification_uid/g" "prometheus/alert_rules.json"
 # Update Prometheus datasource UID
 sed -i "s/datasource_placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_alert_rules.json"
+
+# Use sed to replace the placeholder
+sed -i "s/folder_placeholder_uid/$FOLDER_UID/g" "prometheus/json/temp_alert_rules_canary.json"
+# Update Prometheus datasource UID
+sed -i "s/datasource_placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_alert_rules_canary.json"
+
 
 # Deploy the dashboard
 echo "Deploying dashboard..."
@@ -150,6 +154,14 @@ curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -d @prometheus/json/temp_alert_rules.json
 echo "Alert rules deployed."
 
+echo "Deploying alert rules..."
+curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $GRAFANA_TOKEN" \
+  -d @prometheus/json/temp_alert_rules_canary.json
+echo "Alert rules deployed."
+
 # Remove the temporary file after use
 rm prometheus/json/temp_grafana_dashboard.json
 rm prometheus/json/temp_alert_rules.json
+rm prometheus/json/temp_alert_rules_canary.json

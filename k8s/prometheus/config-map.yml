@@ -14,17 +14,35 @@ data:
       static_configs:
       - targets: ['localhost:9090']
     - job_name: 'app-backend'
-      static_configs:
-      - targets: ['app-backend-service.default.svc.cluster.local:5000']
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        regex: app-backend
+        target_label: job
+      - source_labels: [__meta_kubernetes_pod_label_version]
+        target_label: version
+      - action: keep
+        regex: app-backend
+        source_labels: [__meta_kubernetes_pod_label_app]
+
   alert-rules.yml: |
     groups:
     - name: example
       rules:
       - alert: HighErrorRate
-        expr: job:request_errors:rate5m{job="app-backend"} > 0.05
+        expr: job:request_errors:rate5m{job="app-backend", version="v2"} > 0.05
         for: 5m
         labels:
           severity: critical
         annotations:
-          summary: High request error rate on app-backend
-          description: "Error rate is {{ $value }} over the last 5 minutes."
+          summary: "High request error rate on app-backend v2"
+          description: "Error rate is {{ $value }} over the last 5 minutes for v2."
+      - alert: HighErrorRateCanary
+        expr: job:request_errors:rate5m{job="app-backend", version="canary"} > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High request error rate on app-backend canary"
+          description: "Error rate is {{ $value }} over the last 5 minutes for canary."

@@ -48,6 +48,12 @@ spec:
   http:
     - match:
       - uri:
+          prefix: /prometheus
+      route:
+        - destination:
+            host: prometheus-service.monitoring.svc.cluster.local
+    - match:
+      - uri:
           # these need to match the 'DEPLOY_NAME' of the actual frontend image
           prefix: /frontend/v0.2.4
       rewrite:

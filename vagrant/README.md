@@ -73,16 +73,9 @@ The Kubernetes Dashboard is designed with HTTPS in mind. However, as we are all 
 
 ### Prometheus
 
-When needing port forwarding write the following line in the terminal to expose the prometheus service.
+After running `./full_deploy.sh` a prometheus UI can be accessed at http://10.10.10.0/prometheus, this location is used for the grafana dashboard and alerts. In order to automatically create and start the dashboard and alerts jq must be installed on a linux system: `sudo apt-get install jq`. As well as a python3 distribution. Both of these parse some of the returns from grafana.
 
-```
-kubectl port-forward -n monitoring svc/prometheus-service 8080:8080
-```
-In order to launch grafana open a new terminal run `export KUBECONFIG=k3s.yaml`. 
-Then check if the kubectl is reachable with `kubectl get nodes`.
-
-Make sure jq is installed on a linux system. `sudo apt-get install jq`.
-
+Furthermore `sed` command is used to exchange placeholder uids inside of the json files. If `sed` is not working on macOS, you can install the Linux version with `brew install gnu-sed` and change it to `gsed`.
 
 By running the following command the grafana interface will be launched, please make sure localhost:3000 is free first or change the portforwarding in the grafana deploy file. If no contact can be made the grafana API token will stay empty and the script will return an error. To solve make sure localhost:3000 is free or change the port in the grafan deploy script.
 ```
