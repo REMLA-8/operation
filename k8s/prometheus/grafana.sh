@@ -1,4 +1,7 @@
 #!/bin/bash
+
+export KUBECONFIG=k3s.yaml
+
 #Set Unique Identifiers
 PROMETHEUS_UID="prometheus-datasource-uid3"
 # Set the namespace
