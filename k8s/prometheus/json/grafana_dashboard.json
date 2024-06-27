@@ -130,7 +130,7 @@
         },
         "targets": [
           {
-            "expr": "scam_predictions_total{version='v2'}",
+            "expr": "prediction_requests_total{version='v2'}",
             "legendFormat": "v2",
             "refId": "A",
             "datasource": {
@@ -139,7 +139,7 @@
             }
           },
           {
-            "expr": "scam_predictions_total{version='canary'}",
+            "expr": "prediction_requests_total{version='canary'}",
             "legendFormat": "Canary",
             "refId": "B",
             "datasource": {
