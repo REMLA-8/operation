@@ -1,15 +1,15 @@
 {
-  "title": "Request_Rate",
+  "title": "Request_Rate_v2",
   "ruleGroup": "API",
   "folderUID": "folder_placeholder_uid",
   "noDataState": "OK",
   "execErrState": "OK",
   "for": "1m",
   "orgId": 1,
-  "uid": "",
+  "uid": "Rule_v2",
   "condition": "B",
   "annotations": {
-    "summary": "Number of Requests has exceeded the set threshold."
+    "summary": "Number of Requests has exceeded the set threshold in v2 deployment."
   },
   "labels": {
     "API": "test1"
@@ -32,7 +32,7 @@
         },
         "disableTextWrap": false,
         "editorMode": "builder",
-        "expr": "increase(prediction_requests_total[1m])",
+        "expr": "increase(prediction_requests_total{version='v2'}[1m])",
         "fullMetaSearch": false,
         "includeNullMetadata": true,
         "instant": true,
