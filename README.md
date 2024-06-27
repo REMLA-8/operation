@@ -4,7 +4,7 @@ Welcome to the main README of the project for REMLA Team 8 2024.
 
 ## Repositories
 
-- [`operation](https://github.com/remla24-team8/operation)
+- [`operation`](https://github.com/remla24-team8/operation)
 - [`lib-version`](https://github.com/remla24-team8/lib-version)
 - [`lib-ml`](https://github.com/remla24-team8/lib-ml)
 - [`model-training`](https://github.com/remla24-team8/model-training) 
