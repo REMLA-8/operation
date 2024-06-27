@@ -5,10 +5,10 @@ Welcome to the main README of the project for REMLA Team 8 2024.
 ## Repositories
 
 - [`operation](https://github.com/remla24-team8/operation)
-- [`lib-version`](https://github.com/remla24-team8/lib-version) (works now)
+- [`lib-version`](https://github.com/remla24-team8/lib-version)
 - [`lib-ml`](https://github.com/remla24-team8/lib-ml)
-- [`model-training]`(https://github.com/remla24-team8/model-training) (no change)
-- [`model-service`](https://github.com/remla24-team8/model-service) (no change)
+- [`model-training`](https://github.com/remla24-team8/model-training) 
+- [`model-service`](https://github.com/remla24-team8/model-service)
 - [`app-backend`](https://github.com/remla24-team8/app-service)
 - [`app-frontend`](https://github.com/remla24-team8/app-frontend)
 
