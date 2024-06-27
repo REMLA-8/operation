@@ -4,5 +4,6 @@
 
 ./app.sh
 
-# Apply Prometheus configurations
 ./prometheus/setup.sh
+
+./prometheus/grafana.sh

@@ -1,10 +1,11 @@
 #!/bin/bash
+
+export KUBECONFIG=k3s.yaml
+
 #Set Unique Identifiers
-TARGETPORT=3000
 PROMETHEUS_UID="prometheus-datasource-uid3"
 # Set the namespace
 NAMESPACE="monitoring"
-
 
 # Create the namespace if it doesn't exist
 kubectl create namespace $NAMESPACE || true
@@ -14,24 +15,9 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
 
 # Install or upgrade Grafana
-helm upgrade --install grafana grafana/grafana --namespace $NAMESPACE --create-namespace  --wait
+helm upgrade --install grafana grafana/grafana -f prometheus/grafana-values.yml --namespace $NAMESPACE --create-namespace  --wait
 
-# Create a NodePort service for Grafana
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Service
-metadata:
-  name: grafana
-  namespace: $NAMESPACE
-spec:
-  type: NodePort
-  ports:
-  - port: 80
-    targetPort: $TARGETPORT
-    nodePort: 32000
-  selector:
-    app.kubernetes.io/name: grafana
-EOF
+kubectl apply -f prometheus/grafana.yml
 
 echo "    "
 # Retrieve the admin password
@@ -41,21 +27,13 @@ echo "Grafana admin password: $ADMIN_PASSWORD"
 # Get the Grafana pod name
 POD_NAME=$(kubectl get pods --namespace $NAMESPACE -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
 
-# Port-forward to access Grafana locally
-echo "Port-forwarding Grafana to http://localhost:$TARGETPORT"
-kubectl --namespace $NAMESPACE port-forward $POD_NAME $TARGETPORT:3000 &
-
-# Wait until port-forward is established
-sleep 10
-
 # Print access instructions
-echo "Grafana is now accessible via NodePort on port 32000 of any cluster node."
-echo "Access Grafana at: http://<node-ip>:32000"
-echo "Login with username 'admin' and the password retrieved above."
+echo "Grafana is accessible at http://10.10.10.0/grafana."
+echo "Login with username 'admin' and the admin password retrieved above."
 echo "    "
 
 # Create Grafana API Token
-GRAFANA_URL="http://localhost:$TARGETPORT"
+GRAFANA_URL="http://10.10.10.0/grafana"
 
 # Current date and time as a unique identifier
 UNIQUE_ID=$(date +%s)
@@ -114,7 +92,6 @@ cp prometheus/json/grafana_dashboard.json prometheus/json/temp_grafana_dashboard
 cp prometheus/json/alert_rules.json prometheus/json/temp_alert_rules.json
 cp prometheus/json/alert_rules_canary.json prometheus/json/temp_alert_rules_canary.json
 
-
 # Replace the placeholder UID in the JSON file
 sed -i "s/placeholder_uid/$PROMETHEUS_UID/g" "prometheus/json/temp_grafana_dashboard.json"
 
@@ -147,19 +124,17 @@ echo "Contact point set up"
 
 echo "    "
 # Deploy alert rules
-echo "Deploying alert rules..."
+echo "Deploying alert rules... This won't work with alert rules have been previously deployed. Those must be manually deleted."
 curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/json/temp_alert_rules.json
-echo "Alert rules deployed."
 
-echo "Deploying alert rules..."
 curl -X POST $GRAFANA_URL/api/v1/provisioning/alert-rules \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $GRAFANA_TOKEN" \
   -d @prometheus/json/temp_alert_rules_canary.json
-echo "Alert rules deployed."
+echo "    "
 
 # Remove the temporary file after use
 rm prometheus/json/temp_grafana_dashboard.json
